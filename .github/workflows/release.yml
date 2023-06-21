@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    runs-on: ubuntu-latest-8-cores
+    timeout-minutes: 60
+    env:
+      # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
+      SBT_OPTS: "-Dsbt.ci=true"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Configure AWS Credentials (prod)
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+#     - name: Cache
+#       No cache for release! We want clean and full release!
+
+      - name: Prepare environment
+        env:
+          PRIVATE_REPOSITORY_SBT: ${{ secrets.PRIVATE_REPOSITORY_SBT }}
+        run: |
+          mkdir --parents ~/.sbt/1.0 || true
+          echo "$PRIVATE_REPOSITORY_SBT" > ~/.sbt/1.0/privateRepository.sbt
+
+      - name: Release
+        id: release
+        run: |
+          sbt "release with-defaults"
+          export VERSION="$(cat target/release-info)"
+          echo "version=$VERSION" # DO NOT REMOVE, because of bad parsing for outputs
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if [[ "$VERSION" =~ .*-M[0-9]+ ]]; then
+            echo "repository=milestones" >> $GITHUB_OUTPUT
+          else
+            echo "repository=releases" >> $GITHUB_OUTPUT
+          fi
+        working-directory: back
+
+      - name: Publish on CodeArtifact (prod/us-east-1)
+        run: |
+          aws \
+            --region us-east-1 \
+            codeartifact update-package-versions-status \
+            --domain ${{ secrets.AWS_CODEARTIFACT_DOMAIN }} \
+            --domain-owner ${{ secrets.AWS_CODEARTIFACT_OWNER }} \
+            --repository ${{ steps.release.outputs.repository }} \
+            --format maven \
+            --namespace io.gatling.cloud \
+            --package gatling-enterprise-api \
+            --versions "${{ steps.release.outputs.version }}" \
+            --target-status Published

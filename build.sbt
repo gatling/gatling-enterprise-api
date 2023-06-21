@@ -1,13 +1,13 @@
 ThisBuild / scalaVersion := "2.12.17"
 ThisBuild / name := "gatling-enterprise-api"
 ThisBuild / organization := "io.gatling.enterprise"
-ThisBuild / version := "0.1.0-SNAPSHOT"
 
 lazy val root = (project in file("."))
   .settings(
     name := "gatling-enterprise-api"
   )
 
+enablePlugins(GatlingCorpPlugin)
 enablePlugins(Smithy4sCodegenPlugin)
 
 libraryDependencies ++= Seq(

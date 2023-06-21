@@ -45,6 +45,9 @@ jobs:
         key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt', '**/plugins.sbt', '**/build.properties') }}
 
     - name: Compile
+      env:
+        # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
+        SBT_OPTS: "-Dsbt.ci=true"
       run: |
         sbt \
           "all scalafmtCheckAll" \
