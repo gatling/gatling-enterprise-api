@@ -2,6 +2,7 @@ scalaVersion := "2.13.11"
 name := "gatling-enterprise-api"
 organization := "io.gatling.enterprise"
 
+enablePlugins(GatlingCorpPlugin)
 enablePlugins(Smithy4sCodegenPlugin)
 
 libraryDependencies ++= Seq(
