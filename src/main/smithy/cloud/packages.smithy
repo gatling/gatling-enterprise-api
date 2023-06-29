@@ -35,7 +35,7 @@ structure CreatePackageResponse {
 operation ReadPackage {
   input := {
     @httpLabel
-    @required id: String
+    @required id: UUID
 
     @httpQuery("apiToken")
     @required apiToken: String
@@ -52,7 +52,7 @@ structure ReadPackageResponse {
 operation UpdatePackageFile {
   input := with [PackageFileMixin] {
     @httpLabel
-    @required id: String
+    @required id: UUID
   }
   output: UpdatePackageFileResponse
 }
@@ -74,7 +74,7 @@ structure PackageCommon {
 }
 
 structure SimplePackageResponse with [PackageCommon] {
-  @required id: String
+  @required id: UUID
 }
 
 enum PackageActionResponse {
@@ -87,7 +87,7 @@ map PackageActionsResponse {
 }
 
 structure PackageResponse with [PackageCommon] {
-  @required id: String
+  @required id: UUID
   file: PackageFileResponse
   @required _actions: PackageActionsResponse
 }
@@ -108,5 +108,5 @@ structure PackageFileMixin {
 structure PackageFileResponse with [PackageFileMixin] {}
 
 structure SimplePackageResponse with [PackageCommon] {
-  @required id: String
+  @required id: UUID
 }
