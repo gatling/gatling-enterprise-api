@@ -49,6 +49,7 @@ structure ReadPackageResponse {
 }
 
 @http(method: "PUT", uri: "/api/control-plane/private-packages/{id}/file", code: 200)
+@auth([controlPlaneToken])
 operation UpdatePackageFile {
   input := with [PackageFileMixin] {
     @httpLabel
