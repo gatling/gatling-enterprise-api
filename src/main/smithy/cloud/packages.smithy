@@ -8,6 +8,7 @@ use io.gatling.enterprise.api#ActionResponse
 use io.gatling.enterprise.api#GenericClientError
 use io.gatling.enterprise.api#GenericServerError
 use io.gatling.enterprise.api#NotFoundError
+use io.gatling.enterprise.api#UnauthorizedError
 use io.gatling.enterprise.api#controlPlaneToken
 
 @simpleRestJson
@@ -15,7 +16,7 @@ use io.gatling.enterprise.api#controlPlaneToken
 service PackageService {
   version: "0.0.0"
   operations: [CreatePackage, ReadPackage, UpdatePackageFile]
-  errors: [GenericServerError, GenericClientError]
+  errors: [GenericServerError, GenericClientError, UnauthorizedError, NotFoundError]
 }
 
 @http(method: "POST", uri: "/api/control-plane/private-packages", code: 200)
@@ -41,7 +42,6 @@ operation ReadPackage {
     @required apiToken: String
   }
   output: ReadPackageResponse
-  errors: [NotFoundError]
 }
 
 structure ReadPackageResponse {
