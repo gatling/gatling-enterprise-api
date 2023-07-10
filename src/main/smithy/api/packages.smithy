@@ -52,14 +52,8 @@ structure UpdatePrivatePackageFileResponse {
   @required data: PrivatePackageFileResponse
 }
 
-enum PrivatePackageStorageType {
-  PRIVATE = "private"
-  PUBLIC = "public"
-}
-
 @mixin
 structure PrivatePackageCommon {
-  @required storageType: PrivatePackageStorageType
   @required teamId: UUID
   @required name: String
 }
