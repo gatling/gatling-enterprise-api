@@ -15,19 +15,8 @@ use io.gatling.enterprise.api#controlPlaneToken
 @controlPlaneToken
 service PackageService {
   version: "0.0.0"
-  operations: [CreatePackage, ReadPackage, UpdatePackageFile]
+  operations: [ReadPackage, UpdatePackageFile]
   errors: [GenericServerError, GenericClientError, UnauthorizedError, NotFoundError]
-}
-
-@http(method: "POST", uri: "/api/control-plane/private-packages", code: 200)
-@auth([controlPlaneToken])
-operation CreatePackage {
-  input := with [PackageCommon] {}
-  output: CreatePackageResponse
-}
-
-structure CreatePackageResponse {
-  @required data: SimplePackageResponse
 }
 
 @readonly
