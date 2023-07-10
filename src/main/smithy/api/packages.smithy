@@ -21,7 +21,7 @@ service PrivatePackageService {
 
 
 @readonly
-@http(method: "GET", uri: "/api/control-plane/private-PrivatePackages/{id}", code: 200)
+@http(method: "GET", uri: "/api/control-plane/private-packages/{id}", code: 200)
 @auth([controlPlaneToken])
 operation ReadPrivatePackage {
   input := {
@@ -38,7 +38,7 @@ structure ReadPrivatePackageResponse {
   @required data: PrivatePackageResponse
 }
 
-@http(method: "PUT", uri: "/api/control-plane/private-PrivatePackages/{id}/file", code: 200)
+@http(method: "PUT", uri: "/api/control-plane/private-packages/{id}/file", code: 200)
 @auth([controlPlaneToken])
 operation UpdatePrivatePackageFile {
   input := with [PrivatePackageFileMixin] {
