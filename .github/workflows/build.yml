@@ -22,35 +22,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '17'
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
-    - name: Cache SBT
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.m2/repository
-          ~/.ivy2/cache
-          ~/.cache/coursier
-          ~/.sbt/launchers
-          ~/.sbt/boot
-          ~/.sbt/preloaded
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt', '**/plugins.sbt', '**/build.properties') }}
+      - name: Cache SBT
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt/launchers
+            ~/.sbt/boot
+            ~/.sbt/preloaded
+          key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt', '**/plugins.sbt', '**/build.properties') }}
 
-    - name: Compile
-      env:
-        # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
-        SBT_OPTS: "-Dsbt.ci=true"
-      run: |
-        sbt \
-          "all scalafmtCheckAll" \
-          "all scalafixAll --check" \
-          "all compile" \
-          "all test" \
+      - name: Compile
+        env:
+          # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
+          SBT_OPTS: "-Dsbt.ci=true"
+        run: |
+          sbt \
+            "all scalafmtCheckAll" \
+            "all scalafixAll --check" \
+            "all compile" \
+            "all test" \
