@@ -48,6 +48,9 @@ operation UpdatePrivatePackageFile {
   output: UpdatePrivatePackageFileResponse
 }
 
+structure StripeEndpointResponse {
+}
+
 structure UpdatePrivatePackageFileResponse {
   @required data: PrivatePackageFileResponse
 }

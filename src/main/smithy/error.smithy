@@ -34,4 +34,12 @@ structure NotFoundError {}
 
 @error("client")
 @httpError(401)
-structure UnauthorizedError {}
+structure UnauthorizedError {
+  @httpPayload message: String
+}
+
+@error("client")
+@httpError(400)
+structure BadRequestError {
+  @httpPayload message: String
+}

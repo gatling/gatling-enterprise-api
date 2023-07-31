@@ -6,3 +6,9 @@ namespace io.gatling.enterprise.api
 @trait(selector: "service")
 structure controlPlaneToken {
 }
+
+
+@authDefinition
+@trait(selector: "service")
+structure browserAccess {
+}
