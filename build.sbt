@@ -1,19 +1,24 @@
-scalaVersion := "2.13.11"
+scalaVersion := "2.12.18"
 name := "gatling-enterprise-api"
 organization := "io.gatling.enterprise"
 
-enablePlugins(GatlingCorpPlugin)
-enablePlugins(Smithy4sCodegenPlugin)
+autoScalaLibrary := false
+crossPaths := false
+
+enablePlugins(GatlingVersioningPlugin)
+enablePlugins(GatlingBasicInfoPlugin)
+enablePlugins(GatlingReleasePlugin)
+enablePlugins(SmithyBuildPlugin)
 
 libraryDependencies ++= Seq(
-  "com.disneystreaming.smithy4s" %% "smithy4s-http4s" % smithy4sVersion.value,
   "com.disneystreaming.alloy" % "alloy-core" % "0.2.3"
 )
 
-(Compile / packageBin / mappings) := {
+Compile / compile := ((Compile / compile) dependsOn (Compile / smithyBuild)).value
+Compile / packageBin / mappings := {
   val defaultMappings = (Compile / packageBin / mappings).value
-  defaultMappings.filterNot { case (file, path) =>
-    // Filter out OpenAPI JSON file
-    path.endsWith(".json")
-  }
+  val smithyDirectory = (Compile / smithyOutputDir).value / "source" / "sources"
+  val smithyFiles = smithyDirectory ** "**" pair Path.rebase(smithyDirectory,  "META-INF/smithy")
+  smithyFiles ++ defaultMappings
 }
+Compile / unmanagedSourceDirectories += sourceDirectory.value / "main" / "smithy"

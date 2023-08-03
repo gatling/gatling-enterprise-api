@@ -48,9 +48,4 @@ jobs:
         env:
           # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
           SBT_OPTS: "-Dsbt.ci=true"
-        run: |
-          sbt \
-            "all scalafmtCheckAll" \
-            "all scalafixAll --check" \
-            "all compile" \
-            "all test" \
+        run: sbt compile
