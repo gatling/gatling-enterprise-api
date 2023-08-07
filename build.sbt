@@ -11,7 +11,7 @@ enablePlugins(GatlingReleasePlugin)
 enablePlugins(SmithyBuildPlugin)
 
 libraryDependencies ++= Seq(
-  "com.disneystreaming.alloy" % "alloy-core" % "0.2.3"
+  "com.disneystreaming.alloy" % "alloy-core" % "0.2.4"
 )
 
 Compile / compile := ((Compile / compile) dependsOn (Compile / smithyBuild)).value
