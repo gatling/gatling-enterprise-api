@@ -39,19 +39,8 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '17'
-
-      - name: Cache SBT
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.m2/repository
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt/launchers
-            ~/.sbt/boot
-            ~/.sbt/preloaded
-          key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt', '**/plugins.sbt', '**/build.properties') }}
+          java-version: '21'
+          cache: 'sbt'
 
       - name: Next version
         id: tag
