@@ -1,0 +1,26 @@
+responses:
+  InfoResponse:
+    type: object
+    description: Server informations
+    required:
+      - versions
+    properties:
+      versions:
+        type: object
+        description: Versions supported
+        required:
+          - java
+        properties:
+          java:
+            $ref: '#/responses/VersionSupported'
+
+  VersionSupported:
+    type: object
+    description: Bound versions
+    properties:
+      min:
+        type: string
+        description: Minimum version supported
+      max:
+        type: string
+        description: Maximum version supported

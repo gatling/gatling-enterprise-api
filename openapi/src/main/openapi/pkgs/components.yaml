@@ -1,0 +1,120 @@
+parameters:
+  pkg:
+    id:
+      name: packageId
+      in: path
+      schema:
+        type: string
+      description: "Package ID available by clicking on the clipboard icon in the packages table"
+      example: "12eef26c-1078-498b-8788-5e74b5e64f46"
+    filename:
+      name: filename
+      in: query
+      schema:
+        type: string
+      description: "Package filename"
+      example: "maven-sample-1.0.0-shaded.jar"
+
+requests:
+  PkgUploadBodySchema:
+    schema:
+      type: string
+      format: binary
+  Package:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        description: "Package name"
+        example: "My Gatling package"
+      storageType:
+        type: string
+        description: "Package type: private or public"
+        example: "public"
+      teamId:
+        type: string
+        description: "Package team ID, omit if global team"
+        example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+  PkgUploadBody:
+    description: Bundled simulation shaded JAR (maximum size of 5GB)
+    required: true
+    content:
+      application/x-java-archive:
+        $ref: '#/requests/PkgUploadBodySchema'
+      application/x-jar:
+        $ref: '#/requests/PkgUploadBodySchema'
+      application/java-archive:
+        $ref: '#/requests/PkgUploadBodySchema'
+      application/octet-stream:
+        $ref: '#/requests/PkgUploadBodySchema'
+
+responses:
+  PackageFile:
+    type: object
+    description: Package file
+    properties:
+      filename:
+        type: string
+        description: Name of the uploaded file
+        example: "maven-sample-1.0.0-shaded.jar"
+      version:
+        type: string
+        description: Package gatling version
+        example: "3.7.3"
+      checksum:
+        type: string
+        description: Package checksum
+        example: "3y8Jb7JBQPE/UBvj3vUf2A=="
+      lastUpdated:
+        type: number
+        description: last update timestamp
+        example: 1640102835073
+
+  PackageIndex:
+    type: object
+    description: Package that can be used by a simulation
+    required:
+      - id
+      - name
+      - teamId
+    properties:
+      id:
+        type: string
+        description: Package ID
+        example: "0164293d-d15a-465f-8f40-41a2133fb35e"
+      name:
+        type: string
+        description: Package name
+        example: "maven-sample"
+      teamId:
+        type: string
+        description: Package team ID
+        example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+      filename:
+        type: string
+        description: Name of the uploaded file
+        example: "maven-sample-1.0.0-shaded.jar"
+
+  Package:
+    type: object
+    description: Package that can be used by a simulation
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+        description: Package ID
+        example: "0164293d-d15a-465f-8f40-41a2133fb35e"
+      name:
+        type: string
+        description: Package name
+        example: "maven-sample"
+      teamId:
+        type: string
+        description: Package team ID
+        example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+      file:
+        $ref: "#/responses/PackageFile"

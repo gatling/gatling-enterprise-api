@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Gatling Enterprise Cloud API
+  description: Documentation of the public Gatling Enterprise Cloud API. To use this API you will need to generate an API token.
+  version: 'VERSION_PLACEHOLDER'
+servers:
+  - url: '{API_URL}/api/public'
+    variables:
+      API_URL:
+        default: API_URL_PLACEHOLDER
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: authorization
+paths:
+  # Default
+  /ping:
+    $ref: 'default/path.yaml#/ping'
+
+  # Simulation
+  /simulations:
+    $ref: 'simulation/path.yaml#/simulations'
+  /simulations/{simulationId}:
+    $ref: 'simulation/path.yaml#/simulations.one'
+  /simulations/{simulationId}/classname:
+    $ref: 'simulation/path.yaml#/simulations.one.classname'
+  /simulations/team:
+    $ref: 'simulation/path.yaml#/simulations.team'
+  /simulations/start:
+    $ref: 'simulation/path.yaml#/simulations.start'
+  /simulations/abort:
+    $ref: 'simulation/path.yaml#/simulations.abort'
+  /simulations/abortAll:
+    $ref: 'simulation/path.yaml#/simulations.abortAll'
+  /summaries/requests:
+    $ref: 'simulation/path.yaml#/summaries.requests'
+
+  # Runs
+  /runs:
+    $ref: 'runs/path.yaml#/runs'
+  /run:
+    $ref: 'runs/path.yaml#/run'
+  /injectors:
+    $ref: 'runs/path.yaml#/injectors'
+  /remotes:
+    $ref: 'runs/path.yaml#/remotes'
+  /hostnames:
+    $ref: 'runs/path.yaml#/hostnames'
+  /scenarios:
+    $ref: 'runs/path.yaml#/scenarios'
+  /groups:
+    $ref: 'runs/path.yaml#/groups'
+  /requests:
+    $ref: 'runs/path.yaml#/requests'
+  /metrics:
+    $ref: 'runs/path.yaml#/metrics'
+  /series:
+    $ref: 'runs/path.yaml#/series'
+
+  # Packages
+  /artifacts:
+    $ref: 'pkgs/path.yaml#/packages'
+  /artifacts/{packageId}:
+    $ref: 'pkgs/path.yaml#/package'
+  /artifacts/{packageId}/content:
+    $ref: 'pkgs/path.yaml#/packages.upload'
+
+  # Teams
+  /teams:
+    $ref: 'teams/path.yaml#/teams'
+
+  # Locations
+  /pools:
+    $ref: 'pools/path.yaml#/pools'
+  /search/private-locations:
+    $ref: 'private-locations/path.yaml#/private-locations'
+
+  # Info
+  /info:
+    $ref: 'info/path.yaml#/info'

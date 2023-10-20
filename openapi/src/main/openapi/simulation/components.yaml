@@ -1,0 +1,321 @@
+# Requests
+requests:
+  ClassName:
+    description: Allow to update a simulation class name
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/ClassName'
+
+  StartOptions:
+    description: Allows to merge additional Java system properties, environment variables and set custom host configuration for a run
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/SimulationWithManagedLocations'
+        examples:
+          SimulationWithManagedLocations:
+            value:
+              extraSystemProperties:
+                customProperty: "value"
+              extraEnvironmentVariables:
+                customProperty: "value"
+              overrideHostsByPool:
+                "4a399023-d443-3a58-864f-3919760df78b":
+                  size: 1
+                  weight: 60
+                "c800b6d9-163b-3db7-928f-86c1470a9542":
+                  size: 1
+                  weight: 40
+          SimulationWithPrivateLocations:
+            value:
+              extraSystemProperties:
+                customProperty: "value"
+              extraEnvironmentVariables:
+                customProperty: "value"
+
+  Simulation:
+    description: The definition of a simulation
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            teamId:
+              type: string
+              description: "Team ID"
+              example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+            name:
+              type: string
+              description: "Simulation name"
+              example: "My Gatling simulation"
+            className:
+              type: string
+              description: "Fully qualified class name"
+              example: "computerdatabase.BasicSimulation"
+            build:
+              type: object
+              properties:
+                pkgId:
+                  type: string
+                  description: "Id of an already created package you want to link. The package needs to have an uploaded file"
+                  example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+            systemProperties:
+              type: object
+              description: "Map of key/values corresponding to the Java system properties used by this simulation"
+            environmentVariables:
+              type: object
+              description: "Map of key/values corresponding to the environment variables used by this simulation"
+            ignoreGlobalProperties:
+              type: boolean
+              description: "Set to true if you want to ignore the global JVM options and Java system properties set by your organization"
+              example: false
+            meaningfulTimeWindow:
+              type: object
+              properties:
+                rampUp:
+                  type: integer
+                  description: "The first seconds you want to exclude from the run"
+                rampDown:
+                  type: integer
+                  description: "The last seconds you want to exclude from the run"
+            hostsByPool:
+              $ref: '#/schemas/HostsByPool'
+            usePoolWeights:
+              type: boolean
+              description: "Set to true if you want to enable the custom weight set on your locations"
+              example: false
+            usePoolDedicatedIps:
+              type: boolean
+              description: Use dedicated IPs for your load generators
+              example: false
+
+  # TODO: all requests should be defined here
+
+# Responses
+responses:
+  ClassName:
+    $ref: '#/schemas/ClassName'
+
+  Simulation:
+    type: object
+    properties:
+      id:
+        type: string
+        description: "Simulation ID"
+        example: "a00589b6-3014-41be-97e3-c2784965e4fe"
+      teamId:
+        type: string
+        description: "Team ID"
+        example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+      name:
+        type: string
+        description: "Simulation name"
+        example: "My Gatling simulation"
+      className:
+        type: string
+        description: "Fully qualified class name"
+        example: "computerdatabase.BasicSimulation"
+      build:
+        type: object
+        properties:
+          pkgId:
+            type: string
+            description: "Id of an already created package you want to link. The package needs to have an uploaded file"
+            example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
+      systemProperties:
+        type: object
+        description: "Map of key/values corresponding to the Java system properties used by this simulation"
+      environmentVariables:
+        type: object
+        description: "Map of key/values corresponding to the environment variables used by this simulation"
+      ignoreGlobalProperties:
+        type: boolean
+        description: "Set to true if you want to ignore the global JVM options, Java system properties and environment variables set by your organization"
+        example: false
+      meaningfulTimeWindow:
+        type: object
+        properties:
+          rampUp:
+            type: integer
+            description: "The first seconds you want to exclude from the run"
+          rampDown:
+            type: integer
+            description: "The last seconds you want to exclude from the run"
+      hostsByPool:
+        type: object
+        description: "ID of the public location you want to use"
+        properties:
+          poolId:
+            type: object
+            properties:
+              size:
+                type: integer
+              weight:
+                type: number
+      hostsByLocation:
+        type: object
+        description: "ID of the location you want to use"
+        properties:
+          poolId:
+            type: object
+            properties:
+              size:
+                type: integer
+              weight:
+                type: number
+      usePoolWeights:
+        type: boolean
+        description: "Set to true if you want to enable the custom weight set on your locations"
+        example: false
+      usePoolDedicatedIps:
+        type: boolean
+        description: Use dedicated IPs for your load generators
+        example: false
+
+  # TODO: all responses should be defined here
+
+# Schemas
+schemas:
+  SimulationWithManagedLocations:
+    type: object
+    properties:
+      extraSystemProperties:
+        $ref: '../common/components.yaml#/schemas/CustomDictionary'
+      extraEnvironmentVariables:
+        $ref: '../common/components.yaml#/schemas/CustomDictionary'
+      overrideHostsByPool:
+        $ref: '#/schemas/HostsByPool'
+
+  ClassName:
+    type: object
+    required:
+      - className
+    properties:
+      className:
+        type: string
+        description: Fully qualified class name of a simulation
+        example: computerdatabase.BasicSimulation
+
+
+  HostsByPool:
+    type: object
+    description: "Number of hosts and associated weight, for each location used. The weights must sum up to 100 if specified."
+    additionalProperties:
+      type: object
+      required:
+        - size
+      properties:
+        size:
+          type: integer
+        weight:
+          type: number
+    example:
+      "4a399023-d443-3a58-864f-3919760df78b":
+        size: 1
+        weight: 60
+      "c800b6d9-163b-3db7-928f-86c1470a9542":
+        size: 1
+        weight: 40
+
+  RequestsSummary:
+    type: object
+    properties:
+      name:
+        type: string
+      responseTime:
+        $ref: '#/schemas/ResponseTimeRequestsSummary'
+      in:
+        $ref: '#/schemas/InRequestsSummary'
+      out:
+        $ref: '#/schemas/OutRequestsSummary'
+      children:
+        type: array
+        items:
+          $ref: '#/schemas/RequestsSummaryChild'
+
+  RequestsSummaryChild:
+    type: object
+    properties:
+      name:
+        type: string
+      index:
+        type: integer
+      incrementalId:
+        type: integer
+      responseTime:
+        $ref: '#/schemas/ResponseTimeRequestsSummary'
+      in:
+        $ref: '#/schemas/InRequestsSummary'
+      out:
+        $ref: '#/schemas/OutRequestsSummary'
+
+  ResponseTimeRequestsSummary:
+    type: object
+    properties:
+      mean:
+        type: number
+      stdDev:
+        type: number
+      percentiles:
+        type: array
+        description: "This array contains the following percentiles: min, 25%, 50%, 75%, 80%, 85%, 90%, 95%, 99%, 99.9%, 99.99%, max"
+        items:
+          type: number
+
+  OutRequestsSummary:
+    type: object
+    properties:
+      counts:
+        type: object
+        properties:
+          total:
+            type: integer
+            description: Total number of requests sent by the load generators
+      rps:
+        type: object
+        properties:
+          total:
+            type: number
+
+  InRequestsSummary:
+    type: object
+    properties:
+      counts:
+        type: object
+        properties:
+          ok:
+            type: integer
+            description: Total number of ok responses received by the load generators
+          ko:
+            type: integer
+            description: Total number of ko responses received by the load generators
+          koPercent:
+            type: number
+          total:
+            type: integer
+            description: Total number of responses received by the load generators
+      rps:
+        type: object
+        properties:
+          ok:
+            type: number
+          ko:
+            type: number
+          total:
+            type: number
+
+  RunSummary:
+    type: object
+    properties:
+      className:
+        type: string
+      runId:
+        type: string
+      reportsPath:
+        type: string
+        description: The path to the reports page for this run
+      runsPath:
+        type: string
+        description: The path to the runs page for this simulation
