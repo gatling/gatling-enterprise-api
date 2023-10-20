@@ -1,0 +1,230 @@
+simulations:
+  get:
+    summary: Simulations
+    tags:
+      - Simulations
+    description: |
+      Return the list of all simulations belonging to the API token teams.
+
+      Requires at least the `Read` role on each token's team, otherwise they are omitted from the response.
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        description: An array containing the simulations
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'components.yaml#/responses/Simulation'
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'
+  post:
+    summary: Create a simulation
+    tags:
+      - Simulations
+    description: |
+      Create a new simulation.
+
+      Requires at least the `Configure` role on the simulation's team.
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      $ref: 'components.yaml#/requests/Simulation'
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/Simulation'
+
+simulations.one.classname:
+  put:
+    summary: Update simulation class name
+    tags:
+      - Simulations
+    description: |
+      Update simulation class name under corresponding simulationId.
+
+      Requires at least the `Configure` role on the simulation's team.
+    security:
+      - ApiKeyAuth: [ ]
+    parameters:
+      - in: path
+        name: simulationId
+        schema:
+          type: string
+        required: true
+        description: UUID of the simulation
+    requestBody:
+      $ref: 'components.yaml#/requests/ClassName'
+    responses:
+      '200':
+        description: The simulation
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/ClassName'
+
+simulations.one:
+  get:
+    summary: Retrieve one simulation
+    tags:
+      - Simulations
+    description: |
+      Returns the simulation with the corresponding simulationId.
+
+      Requires at least the `Read` role on the simulation's team.
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - in: path
+        name: simulationId
+        schema:
+          type: string
+        required: true
+        description: UUID of the simulation
+    responses:
+      '200':
+        description: The simulation
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/Simulation'
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'
+
+simulations.team:
+  get:
+    summary: Simulations by Team
+    tags:
+      - Simulations
+    description: |
+      Return the list of the simulations on the given team.
+
+      Requires at least the `Read` role on the given team.
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: team
+        in: query
+        required: true
+        schema:
+          type: string
+        description: "Team ID available using /simulations API or by clicking on the clipboard icon in the teams table"
+    responses:
+      '200':
+        description: An array of simulations
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'components.yaml#/responses/Simulation'
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'
+
+simulations.start:
+  post:
+    summary: Start a simulation
+    description: |
+      Start a simulation.
+
+      Requires at least the `Start` role on the simulation's team.
+    tags:
+      - Simulations
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - $ref: "../common/components.yaml#/parameters/simulation"
+    requestBody:
+      $ref: 'components.yaml#/requests/StartOptions'
+    responses:
+      '200':
+        description: Start run information
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/RunSummary'
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'
+
+simulations.abort:
+  post:
+    summary: Stop a run
+    description: |
+      Abort a running simulation.
+
+      Requires at least the `Start` role on the simulation's team.
+    tags:
+      - Simulations
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - $ref: "../common/components.yaml#/parameters/run"
+    responses:
+      '200':
+        description: Run stopped
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'
+
+simulations.abortAll:
+  post:
+    summary: Stop all ongoing runs
+    description: |
+      Abort all ongoing runs in the organization.
+
+      Requires at least the `Start` role on the whole organization.
+    tags:
+      - Simulations
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        description: All runs stopped
+      '500':
+        description: Error when aborting one or more runs
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'
+
+summaries.requests:
+  get:
+    summary: Summaries requests data
+    description:
+      Summaries requests data.
+
+      Requires at least the `Read` role on the run's team.
+    tags:
+      - Summary
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - $ref: "../common/components.yaml#/parameters/run"
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: number
+        description: "Timestamp corresponding to the start of the time window you want to select, default value: injection start"
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: number
+        description: "Timestamp corresponding to the end of the time window you want to select, default value: injection end"
+      - name: scenario
+        in: query
+        required: false
+        schema:
+          type: string
+        description: "Name of the scenario or '*' if you want the stats for every scenario, default value: `*`"
+    responses:
+      '200':
+        description: Summary data, the children can contain others children if you use groups
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/RequestsSummary'
+      '401':
+        $ref: '../common/components.yaml#/responses/Unauthorized'

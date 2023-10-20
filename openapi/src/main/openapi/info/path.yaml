@@ -1,0 +1,11 @@
+info:
+  get:
+    summary: Get server informations
+    tags:
+      - Info
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/InfoResponse'

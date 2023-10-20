@@ -1,0 +1,93 @@
+# Requests
+requests:
+
+# Responses
+responses:
+
+  Unauthorized:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/Error'
+        examples:
+          AccessUnauthorized:
+            value:
+              error: "invalid_request"
+              error_description: "i.g.f.a.s.UnauthorizedException$: Access unauthorized"
+
+  Errors:
+    description: Error or Validation Error
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/Errors'
+        examples:
+          Error:
+            $ref: '#/examples/Error'
+
+
+  Error:
+    description: Error
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/Error'
+        examples:
+          Error:
+            $ref: '#/examples/Error'
+
+  ConflictError:
+    description: Error
+    content:
+      application/json:
+        schema:
+          $ref: '#/schemas/Error'
+        example:
+          error: "invalid_request"
+          error_description: "i.g.f.a.s.RepositoryNameConflictException: There's already a X with the name Y"
+
+# Schemas
+schemas:
+  Errors:
+    oneOf:
+      - $ref: '#/schemas/Error'
+
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+      error_description:
+        type: string
+
+  CustomDictionary:
+    type: object
+    additionalProperties:
+      type: string
+    example:
+      customProperty: "value"
+
+# Examples
+examples:
+
+  Error:
+    value:
+      error: "invalid_request"
+      error_description: "description"
+
+parameters:
+  run:
+    name: run
+    in: query
+    required: true
+    schema:
+      type: string
+    description: "run ID available using /runs API or by clicking on the clipboard icon in the runs table"
+  simulation:
+    name: simulation
+    in: query
+    required: true
+    schema:
+      type: string
+    description: "Simulation ID available using /simulations API or by clicking on the clipboard icon in the simulations table"

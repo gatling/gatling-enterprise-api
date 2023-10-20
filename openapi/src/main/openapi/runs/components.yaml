@@ -1,0 +1,195 @@
+# Requests
+parameters:
+  requests:
+    group:
+      name: group
+      in: query
+      schema:
+        type: string
+      description: "group available using /groups API"
+
+# Responses
+responses:
+
+# Schemas
+schemas:
+  Injector:
+    type: object
+    properties:
+      pool:
+        type: string
+        description: Name of the location containing the load generator
+      hostname:
+        type: string
+        description: Hostname of the load generator
+
+  Metric:
+    type: object
+    properties:
+      value:
+        type: string
+        description: Metric name
+      requirements:
+        type: array
+        description: List of requirements to fetch the metric
+        items:
+          type: string
+
+  Runs:
+    type: object
+    properties:
+      id:
+        type: string
+      incrementalId:
+        type: integer
+      injectStart:
+        type: number
+      injectEnd:
+        type: number
+
+  Run:
+    type: object
+    properties:
+      runId:
+        type: string
+      incrementalId:
+        type: integer
+      buildStart:
+        type: number
+      buildEnd:
+        type: number
+      deployStart:
+        type: number
+      deployEnd:
+        type: number
+      injectStart:
+        type: number
+      injectEnd:
+        type: number
+      status:
+        type: integer
+        enum: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15 ]
+        description: |
+          * `0`: Building
+          * `1`: Deploying
+          * `2`: Deployed
+          * `3`: Injecting
+          * `4`: Successful
+          * `5`: AssertionsSuccessful
+          * `6`: AutomaticallyStopped
+          * `7`: Stopped
+          * `8`: AssertionsFailed
+          * `9`: Timeout
+          * `10`: BuildFailed
+          * `11`: Broken
+          * `12`: DeploymentFailed
+          * `13`: InsufficientLicense
+          * `15`: StopRequested
+      error:
+        type: string
+      runSnapshot:
+        type: object
+        properties:
+          simulationName:
+            type: string
+          systemProperties:
+            $ref: '../common/components.yaml#/schemas/CustomDictionary'
+          environmentVariables:
+            $ref: '../common/components.yaml#/schemas/CustomDictionary'
+          simulationClass:
+            type: string
+          trigger:
+            oneOf:
+              - $ref: 'components.yaml#/schemas/TriggerByApiToken'
+              - $ref: 'components.yaml#/schemas/TriggerByUser'
+          usePoolWeights:
+            type: boolean
+          poolSnapshots:
+            type: array
+            items:
+              type: object
+              properties:
+                poolId:
+                  type: string
+                poolName:
+                  type: string
+                size:
+                  type: integer
+                weight:
+                  type: integer
+                dedicatedIps:
+                    type: array
+                    items:
+                      type: string
+          artifactId:
+            type: string
+      comments:
+        type: object
+        properties:
+          title:
+            type: string
+          description:
+            type: string
+      assertions:
+        type: array
+        items:
+          type: object
+          properties:
+            message:
+              type: string
+            result:
+              type: boolean
+            actualValue:
+              type: number
+      scenario:
+        type: string
+      group:
+        type: string
+      request:
+        type: string
+
+  Series:
+    type: object
+    properties:
+      resolution:
+        type: integer
+        enum: [1, 5, 20, 80, 320]
+        description: Describe how many seconds of data are represented by each value
+      name:
+        type: string
+        description: Label associated with the series. Mostly useful when several series are returned for a given metric (e.g. metrics which return different series per scenario).
+      start:
+        type: number
+        description: Timestamp corresponding to the start time of the injection
+      offset:
+        type: integer
+        description: Offset between the start time of the injection and the first data returned by the API
+      values:
+        type: array
+        items:
+          type: string
+
+  TriggerByApiToken:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          ["apiToken"]
+      tokenId:
+        type: string
+        description: ID of the API Token which triggered the run
+      name:
+        type: string
+        description: name of the API Token  which triggered the run
+
+  TriggerByUser:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          ["user"]
+      userId:
+        type: string
+        description: ID of the user who triggered the run

@@ -1,0 +1,24 @@
+responses:
+  Location:
+    type: object
+    description: Description of a private location
+    required:
+      - id
+      - type
+    properties:
+      id:
+        type: string
+        description: Location ID
+        example: "prl_my_private_location"
+      organizationSlug:
+        type: string
+        description: The unique slug of the organization owning this location
+        example: "gatling-corp"
+      type:
+        type: string
+        description: Type of the private location
+        example: "aws"
+      description:
+        type: string
+        description: The description of the location
+        example: "My first private location"

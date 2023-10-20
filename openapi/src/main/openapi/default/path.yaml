@@ -1,0 +1,16 @@
+ping:
+  get:
+    summary: Ping the server
+    description: |
+      Check that the server is responding.
+
+      No permission, no authentication needed.
+    tags:
+      - Default
+    responses:
+      '200':
+        description: The server pinged back
+        content:
+          application/json:
+            schema:
+              type: object

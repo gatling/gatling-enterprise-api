@@ -22,3 +22,15 @@ Compile / packageBin / mappings := {
   smithyFiles ++ defaultMappings
 }
 Compile / unmanagedSourceDirectories += sourceDirectory.value / "main" / "smithy"
+
+lazy val openapi = (project in file("openapi"))
+  .enablePlugins(PreprocessPlugin)
+  .settings(
+    Preprocess / sourceDirectory := sourceDirectory.value / "main" / "openapi",
+    Preprocess / preprocessRules := Seq(
+      ("API_URL_PLACEHOLDER".r, _ => "https://cloud.gatling.io/"),
+      ("VERSION_PLACEHOLDER".r, _ => version.value)
+    ),
+    Preprocess / preprocessIncludeFilter := "*.yaml",
+    Preprocess / target := target.value / "openapi",
+  )

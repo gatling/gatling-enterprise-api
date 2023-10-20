@@ -1,0 +1,92 @@
+packages.upload:
+  put:
+    summary: Upload a Package
+    tags:
+      - Packages
+    description: |
+      Upload your package JAR, initializing or overriding the content.
+      Beware, server may respond before consuming all the request body for security requirement,
+      which is not handled properly by all HTTP clients.
+
+      The maximum upload size is 5 GB.
+
+      Requires at least the `Configure` role on the package's team.
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - $ref: 'components.yaml#/parameters/pkg/id'
+        required: true
+      - $ref: 'components.yaml#/parameters/pkg/filename'
+        required: true
+    requestBody:
+      $ref: 'components.yaml#/requests/PkgUploadBody'
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/Package'
+      '413':
+        description: Uploaded package is too large
+
+package:
+  get:
+    summary: Get a package by ID
+    tags:
+      - Packages
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - $ref: 'components.yaml#/parameters/pkg/id'
+        required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/Package'
+packages:
+  get:
+    summary: Retrieve the list of packages
+    tags:
+      - Packages
+    description: |
+      Retrieve the list of all the packages that can be seen by the API token.
+
+      Requires at least the `Read` role on each package's team, otherwise they are omitted from the response.
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: 'components.yaml#/responses/PackageIndex'
+  post:
+    summary: Create a package
+    tags:
+      - Packages
+    description: |
+      Create a new package with a name and the associated teamId.
+      The package won't contain any file yet, you need to upload a file to the package in order to use it.
+
+      Requires at least the `Configure` role on the package's team.
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'components.yaml#/requests/Package'
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/Package'
