@@ -1,0 +1,16 @@
+responses:
+  Team:
+    type: object
+    description: Description of a team
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+        description: Team ID
+        example: "0164293d-d15a-465f-8f40-41a2133fb35e"
+      name:
+        type: string
+        description: Team name
+        example: "Default team"

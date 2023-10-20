@@ -1,0 +1,22 @@
+private-locations:
+  get:
+    summary: Retrieve the list of private locations
+    tags:
+      - Locations
+    description: |
+      Retrieve the list of private locations accessible from the current authentication.
+
+      Requires at least the `Read` role on any team.
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: 'components.yaml#/responses/Location'

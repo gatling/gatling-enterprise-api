@@ -1,0 +1,22 @@
+teams:
+  get:
+    summary: Retrieve the list of teams
+    tags:
+      - Teams
+    description: |
+      Retrieve the list of all the teams that can be seen by the API token.
+
+      Requires at least the `Read` role on each team, otherwise they are omitted from the response.
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: 'components.yaml#/responses/Team'
