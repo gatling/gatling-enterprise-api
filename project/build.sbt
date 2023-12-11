@@ -1,4 +1,4 @@
-val smithyVersion = "1.41.1"
+val smithyVersion = "1.42.0"
 
 libraryDependencies += "software.amazon.smithy"            % "smithy-model"              % smithyVersion
 libraryDependencies += "software.amazon.smithy"            % "smithy-build"              % smithyVersion
