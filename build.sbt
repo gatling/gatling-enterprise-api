@@ -1,4 +1,4 @@
-scalaVersion := "2.13.12"
+scalaVersion := "2.13.13"
 name := "gatling-enterprise-api"
 organization := "io.gatling.enterprise"
 
