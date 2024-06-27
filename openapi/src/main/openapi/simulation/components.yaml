@@ -27,12 +27,16 @@ requests:
                 "c800b6d9-163b-3db7-928f-86c1470a9542":
                   size: 1
                   weight: 40
+              title: "My run title"
+              description: "My run description"
           SimulationWithPrivateLocations:
             value:
               extraSystemProperties:
                 customProperty: "value"
               extraEnvironmentVariables:
                 customProperty: "value"
+              title: "My run title"
+              description: "My run description"
 
   Simulation:
     description: The definition of a simulation
@@ -187,6 +191,14 @@ schemas:
         $ref: '../common/components.yaml#/schemas/CustomDictionary'
       overrideHostsByPool:
         $ref: '#/schemas/HostsByPool'
+      title:
+        type: string
+        description: "Run title"
+        example: "My run title"
+      description:
+        type: string
+        description: "Run description"
+        example: "My run description"
 
   ClassName:
     type: object
