@@ -305,6 +305,7 @@ schemas:
             description: Total number of ko responses received by the load generators
           koPercent:
             type: number
+            description: Percentage of ko responses compared to the total number of responses received by the load generators
           total:
             type: integer
             description: Total number of responses received by the load generators
