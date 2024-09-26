@@ -68,6 +68,103 @@ schemas:
     example:
       customProperty: "value"
 
+  StopCriteria:
+    type: array
+    description: An array of stop criteria that includes CPU, error ratio, and response time configurations.
+    items:
+      oneOf:
+        - $ref: '#/schemas/MeanCpuStopCriterion'
+        - $ref: '#/schemas/GlobalErrorRatioStopCriterion'
+        - $ref: '#/schemas/GlobalResponseTimeStopCriterion'
+
+  MeanCpuStopCriterion:
+    type: object
+    description: Stop criterion based on CPU usage
+    required:
+      - type
+      - threshold
+      - timeframeInSeconds
+    properties:
+      type:
+        type: string
+        enum:
+          - meanCpu
+        description: Type of the stop criterion.
+      threshold:
+        $ref: '#/schemas/MeanCpuThreshold'
+      timeframeInSeconds:
+        type: integer
+        description: Timeframe in seconds to measure the stop criterion.
+        example: 60
+
+  GlobalErrorRatioStopCriterion:
+    type: object
+    description: Stop criterion based on global error ratio
+    required:
+      - type
+      - threshold
+      - timeframeInSeconds
+    properties:
+      type:
+        type: string
+        enum:
+          - globalErrorRatio
+        description: Type of the stop criterion.
+      threshold:
+        $ref: '#/schemas/GlobalErrorRatioThreshold'
+      timeframeInSeconds:
+        type: integer
+        description: Timeframe in seconds to measure the stop criterion.
+        example: 60
+
+  GlobalResponseTimeStopCriterion:
+    type: object
+    description: Stop criterion based on global response time
+    required:
+      - type
+      - threshold
+      - timeframeInSeconds
+    properties:
+      type:
+        type: string
+        enum:
+          - globalResponseTime
+        description: Type of the stop criterion.
+      threshold:
+        $ref: '#/schemas/GlobalResponseTimeThreshold'
+      timeframeInSeconds:
+        type: integer
+        description: Timeframe in seconds to measure the stop criterion.
+        example: 100
+
+  MeanCpuThreshold:
+    type: object
+    properties:
+      maxPercentage:
+        type: number
+        description: The maximum allowed CPU percentage.
+        example: 90
+
+  GlobalErrorRatioThreshold:
+    type: object
+    properties:
+      maxPercentage:
+        type: number
+        description: The maximum allowed error ratio percentage.
+        example: 90
+
+  GlobalResponseTimeThreshold:
+    type: object
+    properties:
+      percentile:
+        type: number
+        description: The percentile for response time threshold.
+        example: 99.9
+      maxMilliseconds:
+        type: number
+        description: The maximum allowed response time in milliseconds.
+        example: 300
+
 # Examples
 examples:
 
