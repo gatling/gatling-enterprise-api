@@ -94,6 +94,8 @@ requests:
               type: boolean
               description: Use dedicated IPs for your load generators
               example: false
+            stopCriteria:
+                $ref: '../common/components.yaml#/schemas/StopCriteria'
 
   # TODO: all requests should be defined here
 
@@ -177,6 +179,8 @@ responses:
         type: boolean
         description: Use dedicated IPs for your load generators
         example: false
+      stopCriteria:
+        $ref: '../common/components.yaml#/schemas/StopCriteria'
 
   # TODO: all responses should be defined here
 
@@ -210,6 +214,8 @@ schemas:
         description: Fully qualified class name of a simulation
         example: computerdatabase.BasicSimulation
 
+  StopCriterion:
+    type: object
 
   HostsByPool:
     type: object
