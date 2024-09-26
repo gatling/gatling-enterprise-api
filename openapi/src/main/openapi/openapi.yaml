@@ -14,16 +14,19 @@ components:
       type: apiKey
       in: header
       name: authorization
+  schemas:
+    CommonSchema:
+      $ref: 'common/components.yaml#/schemas'
 paths:
   # Default
   /ping:
     $ref: 'default/path.yaml#/ping'
 
   # Simulation
-  /simulations:
-    $ref: 'simulation/path.yaml#/simulations'
   /simulations/{simulationId}:
     $ref: 'simulation/path.yaml#/simulations.one'
+  /simulations: # Cannot be first, otherwise Swagger UI reference resolution show errors when resolving array reference of simulations
+    $ref: 'simulation/path.yaml#/simulations'
   /simulations/{simulationId}/classname:
     $ref: 'simulation/path.yaml#/simulations.one.classname'
   /simulations/team:
