@@ -123,6 +123,8 @@ schemas:
                       type: string
           artifactId:
             type: string
+          stopCriteria:
+            $ref: '../common/components.yaml#/schemas/StopCriteria'
       comments:
         type: object
         properties:
