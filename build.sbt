@@ -28,8 +28,7 @@ lazy val openapi = (project in file("openapi"))
   .settings(
     Preprocess / sourceDirectory := sourceDirectory.value / "main" / "openapi",
     Preprocess / preprocessRules := Seq(
-      ("API_URL_PLACEHOLDER".r, _ => "https://api.gatling.io"),
-      ("VERSION_PLACEHOLDER".r, _ => version.value)
+      ("API_URL_PLACEHOLDER".r, _ => "https://api.gatling.io")
     ),
     Preprocess / preprocessIncludeFilter := "*.yaml",
     Preprocess / target := target.value / "openapi"

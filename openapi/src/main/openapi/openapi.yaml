@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Gatling Enterprise Cloud API
   description: Documentation of the public Gatling Enterprise Cloud API. To use this API you will need to generate an API token.
-  version: 'VERSION_PLACEHOLDER'
+  version: ''
 servers:
   - url: '{API_URL}/api/public'
     variables:
