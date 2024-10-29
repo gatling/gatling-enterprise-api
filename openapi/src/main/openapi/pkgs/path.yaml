@@ -25,7 +25,7 @@ packages.upload:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/responses/Package'
+              $ref: 'components.yaml#/responses/PackageUpload'
       '413':
         description: Uploaded package is too large
 
