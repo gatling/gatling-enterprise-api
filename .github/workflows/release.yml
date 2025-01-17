@@ -30,6 +30,9 @@ jobs:
           java-version: '21'
           #cache: No cache for release! We want clean and full release!
 
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+
       - name: Configure AWS Credentials (prod)
         uses: aws-actions/configure-aws-credentials@v4
         with:

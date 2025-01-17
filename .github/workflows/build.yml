@@ -33,6 +33,9 @@ jobs:
           java-version: '21'
           cache: 'sbt'
 
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+
       - name: Compile
         env:
           # JVM_OPTS: "-Xmx6G" # ignored when .jvmopts is present
