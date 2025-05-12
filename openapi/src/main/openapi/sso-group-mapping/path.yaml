@@ -1,0 +1,174 @@
+sso-group-mappings:
+  get:
+    summary: Retrieve the list of SSO group mappings
+    tags:
+      - SSO Group Mappings
+    description: |
+      Retrieve the list of all SSO group mappings.
+
+      The apiToken must have at least the Administrator role on the teams or Global to be able to read mappings.
+    security:
+      - ApiKeyAuth: []
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: 'components.yaml#/responses/SsoGroupMapping'
+                relatedResources:
+                  type: object
+                  description: Map of team UUIDs to team objects
+                  additionalProperties:
+                    $ref: 'components.yaml#/responses/Team'
+                  example:
+                    "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff":
+                      id: "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff"
+                      type: "team"
+                      name: "Super team"
+                    "2252a3b4-052d-4b57-987c-af126d40e12c":
+                      id: "2252a3b4-052d-4b57-987c-af126d40e12c"
+                      type: "team"
+                      name: "Marketing team"
+
+  post:
+    summary: Create a new SSO group mapping
+    tags:
+      - SSO Group Mappings
+    description: |
+      Create a new SSO group mapping. Both `globalRole` and `teamRoles` are optional fields, but at least one must be provided.
+
+      The API token must have at least the Administrator role on the teams or Global to be able to write mappings.
+    security:
+      - ApiKeyAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'components.yaml#/responses/SsoGroupMappingCreate'
+    responses:
+      '201':
+        description: SSO group mapping created successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: 'components.yaml#/responses/SsoGroupMapping'
+                relatedResources:
+                  type: object
+                  description: Map of team UUIDs to team objects
+                  additionalProperties:
+                    $ref: 'components.yaml#/responses/Team'
+                  example:
+                    "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff":
+                      id: "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff"
+                      type: "team"
+                      name: "Super team"
+                    "2252a3b4-052d-4b57-987c-af126d40e12c":
+                      id: "2252a3b4-052d-4b57-987c-af126d40e12c"
+                      type: "team"
+                      name: "Marketing team"
+
+sso-group-mappings.one:
+  get:
+    summary: Retrieve a specific SSO group mapping
+    tags:
+      - SSO Group Mappings
+    description: |
+      Retrieve a specific SSO group mapping by its ID.
+
+      The apiToken must have at least the Administrator role on the teams or Global to be able to read mappings.
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: mappingId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the SSO group mapping
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: 'components.yaml#/responses/SsoGroupMapping'
+                relatedResources:
+                  type: object
+                  description: Map of team UUIDs to team objects
+                  additionalProperties:
+                    $ref: 'components.yaml#/responses/Team'
+                  example:
+                    "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff":
+                      id: "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff"
+                      type: "team"
+                      name: "Super team"
+                    "2252a3b4-052d-4b57-987c-af126d40e12c":
+                      id: "2252a3b4-052d-4b57-987c-af126d40e12c"
+                      type: "team"
+                      name: "Marketing team"
+
+  put:
+    summary: Update an SSO group mapping
+    tags:
+      - SSO Group Mappings
+    description: |
+      Update an existing SSO group mapping. Both `globalRole` and `teamRoles` are optional fields, but at least one must be provided.
+
+      The apiToken must have at least the Administrator role on the teams or Global to be able to write mappings.
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: mappingId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the SSO group mapping
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: 'components.yaml#/responses/SsoGroupMappingUpdate'
+    responses:
+      '200':
+        description: SSO group mapping updated successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: 'components.yaml#/responses/SsoGroupMapping'
+
+  delete:
+    summary: Delete an SSO group mapping
+    tags:
+      - SSO Group Mappings
+    description: |
+      Delete an SSO group mapping by its ID.
+
+      The apiToken must have at least the Administrator role on the teams or Global to be able to write mappings.
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: ssoGroupMappingId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the SSO group mapping
+    responses:
+      '204':
+        description: SSO group mapping deleted successfully

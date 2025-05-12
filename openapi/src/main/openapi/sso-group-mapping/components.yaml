@@ -1,0 +1,115 @@
+responses:
+  SsoGroupMapping:
+    type: object
+    description: Description of an SSO group mapping
+    required:
+      - id
+      - group
+      - type
+    properties:
+      id:
+        type: string
+        description: SSO group mapping ID
+        example: "0164293d-d15a-465f-8f40-41a2133fb35e"
+      group:
+        type: string
+        description: SSO group name
+        example: "MyGroup"
+      type:
+        type: string
+        enum: [ "sso-group-mapping" ]
+      globalRole:
+        type: string
+        description: Global role assigned to the group
+        enum: [ "Administrator", "Leader","Contributor","Viewer" ]
+      teamRoles:
+        type: object
+        description: Team roles assigned to the group
+        additionalProperties:
+          type: string
+          description: Role name
+          enum: [ "Team Administrator", "Team Leader","Team Contributor","Team Viewer" ]
+        example:
+          "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff": "Team Viewer"
+          "2252a3b4-052d-4b57-987c-af126d40e12c": "Team Administrator"
+
+  SsoGroupMappingCreate:
+    type: object
+    description: Request body for creating an SSO group mapping
+    required:
+      - group
+      - type
+    properties:
+      group:
+        type: string
+        description: SSO group name
+        example: "Marketing"
+      type:
+        type: string
+        description: Resource type
+        example: "sso-group-mapping"
+      globalRole:
+        type: string
+        description: Global role assigned to the group
+        enum: [ "Administrator", "Leader","Contributor","Viewer" ]
+      teamRoles:
+        type: object
+        description: Team roles assigned to the group
+        additionalProperties:
+          type: string
+          description: Role name
+          enum: [ "Team Administrator", "Team Leader","Team Contributor","Team Viewer" ]
+        example:
+          "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff": "Team Viewer"
+          "2252a3b4-052d-4b57-987c-af126d40e12c": "Team Administrator"
+
+  SsoGroupMappingUpdate:
+    type: object
+    description: Request body for updating an SSO group mapping
+    required:
+      - group
+      - type
+    properties:
+      group:
+        type: string
+        description: SSO group name
+        example: "Marketing"
+      type:
+        type: string
+        description: Resource type
+        example: "sso-group-mapping"
+      globalRole:
+        type: string
+        description: Global role assigned to the group
+        enum: [ "Administrator", "Leader","Contributor","Viewer" ]
+      teamRoles:
+        type: object
+        description: Team roles assigned to the group
+        additionalProperties:
+          type: string
+          description: Role name
+          enum: [ "Team Administrator", "Team Leader","Team Contributor","Team Viewer" ]
+        example:
+          "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff": "Team Viewer"
+          "2252a3b4-052d-4b57-987c-af126d40e12c": "Team Administrator"
+
+  Team:
+    type: object
+    description: Description of a team
+    required:
+      - id
+      - type
+      - name
+    properties:
+      id:
+        type: string
+        description: Team ID
+        example: "31ed3cfb-e6f9-40fd-885e-3ba6a44031ff"
+      type:
+        type: string
+        description: Resource type
+        example: "team"
+      name:
+        type: string
+        description: Team name
+        example: "Super team"
