@@ -80,6 +80,12 @@ paths:
   /search/private-locations:
     $ref: 'private-locations/path.yaml#/private-locations'
 
+  # SSO Group Mappings
+  /sso-group-mappings:
+    $ref: 'sso-group-mapping/path.yaml#/sso-group-mappings'
+  /sso-group-mappings/{ssoGroupMappingId}:
+    $ref: 'sso-group-mapping/path.yaml#/sso-group-mappings.one'
+
   # Info
   /info:
     $ref: 'info/path.yaml#/info'
