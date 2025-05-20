@@ -46,10 +46,6 @@ requests:
         schema:
           type: object
           properties:
-            teamId:
-              type: string
-              description: "Team ID"
-              example: "424571fe-2351-4f3f-ae6a-04b7105f7157"
             name:
               type: string
               description: "Simulation name"
