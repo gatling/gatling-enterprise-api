@@ -90,6 +90,14 @@ paths:
   /sso-group-mappings/{ssoGroupMappingId}:
     $ref: 'sso-group-mapping/path.yaml#/sso-group-mappings.one'
 
+  # Api Tokens
+  /v2/api-tokens:
+    $ref: 'api-token/path.yaml#/api-tokens'
+  /v2/api-tokens/{apiTokenId}:
+    $ref: 'api-token/path.yaml#/api-token'
+  /v2/api-tokens/{apiTokenId}/regenerate-token:
+    $ref: 'api-token/path.yaml#/api-token.regenerate'
+
   # Info
   /info:
     $ref: 'info/path.yaml#/info'
