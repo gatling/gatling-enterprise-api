@@ -1,0 +1,555 @@
+schemas:
+  ApiToken:
+    type: object
+    properties:
+      id:
+        type: string
+      role:
+        $ref: '#/schemas/ApiTokenRole'
+    required:
+      - id
+      - role
+  ApiTokenBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_ApiTokenType'
+          - default: api_token
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  ApiTokenRole:
+    type: string
+    enum:
+      - reader
+      - starter
+      - configurer
+      - administrator
+  BadRequestErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  BriefResponse:
+    oneOf:
+      - $ref: '#/schemas/ApiTokenBriefResponse'
+      - $ref: '#/schemas/ManagedLocationBriefResponse'
+      - $ref: '#/schemas/PackageBriefResponse'
+      - $ref: '#/schemas/PrivateLocationBriefResponse'
+      - $ref: '#/schemas/SourceRepositoryBriefResponse'
+      - $ref: '#/schemas/SsoGroupBriefResponse'
+      - $ref: '#/schemas/TeamBriefResponse'
+      - $ref: '#/schemas/TestBriefResponse'
+      - $ref: '#/schemas/UserBriefResponse'
+  BriefResponseByResourceMap:
+    type: object
+    additionalProperties:
+      $ref: '#/schemas/BriefResponse'
+  ConflictErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  ErrorContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  ForbiddenErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  GoneErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  ManagedLocationBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_ManagedLocationType'
+          - default: managed_location
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  Members:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: '#/schemas/User'
+      apiTokens:
+        type: array
+        items:
+          $ref: '#/schemas/ApiToken'
+      ssoGroups:
+        type: array
+        items:
+          $ref: '#/schemas/SsoGroup'
+    required:
+      - apiTokens
+      - ssoGroups
+      - users
+  NotFoundErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  PackageBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_PackageType'
+          - default: package
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  PrivateLocationBriefResponse:
+    type: object
+    properties:
+      _type:
+        allOf:
+          - $ref: '#/schemas/_PrivateLocationType'
+          - default: private_location
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+  SimpleDictionary:
+    type: object
+    additionalProperties:
+      type: string
+  SourceBrief:
+    type: object
+    properties:
+      type:
+        $ref: '#/schemas/TestTypeResponse'
+    required:
+      - type
+  SourceRepositoryBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_SourceRepositoryType'
+          - default: source_repository
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  SsoGroup:
+    type: object
+    properties:
+      id:
+        type: string
+      role:
+        $ref: '#/schemas/UserRoleV2'
+    required:
+      - id
+      - role
+  SsoGroupBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_SsoGroupType'
+          - default: sso_group
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  TeamAssets:
+    type: object
+    properties:
+      tests:
+        type: array
+        items:
+          type: string
+      packages:
+        type: array
+        items:
+          type: string
+      sourceRepositories:
+        type: array
+        items:
+          type: string
+    required:
+      - packages
+      - sourceRepositories
+      - tests
+  TeamBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_TeamType'
+          - default: team
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  TeamCreateOneResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/schemas/TeamDetailsResponse'
+      relatedResources:
+        $ref: '#/schemas/BriefResponseByResourceMap'
+    required:
+      - data
+      - relatedResources
+    example: '{
+                "data": {
+                  "name": "My New Team",
+                  "_type": "team",
+                  "_id": "team_m5m6xeycotd99j8hp4unzkkxmo",
+                  "_members": {
+                    "users": [],
+                    "apiTokens": [],
+                    "ssoGroups": []
+                  },
+                  "_assets": {
+                    "tests": [],
+                    "packages": [],
+                    "sourceRepositories": []
+                  }
+                },
+                "relatedResources": {}
+              }'
+  TeamDetailsResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_TeamType'
+          - default: team
+      _id:
+        type: string
+      _members:
+        $ref: '#/schemas/Members'
+      _assets:
+        $ref: '#/schemas/TeamAssets'
+    required:
+      - _assets
+      - _id
+      - _members
+      - _type
+      - name
+  TeamItemResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_TeamType'
+          - default: team
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  TeamReadAllResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/schemas/TeamItemResponse'
+      relatedResources:
+        $ref: '#/schemas/BriefResponseByResourceMap'
+    required:
+      - data
+      - relatedResources
+    example: '{
+                "data": [
+                  {
+                    "name": "QA Team",
+                    "_type": "team",
+                    "_id": "team_yjwzoaoasprsiktnronu9rkh4y"
+                  },
+                  {
+                    "name": "Engineering Team",
+                    "_type": "team",
+                    "_id": "team_8t9ccczrpi89zpaggrn3rx3cyr"
+                  }
+              ],
+                "relatedResources": {}
+              }'
+  TeamReadOneResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/schemas/TeamDetailsResponse'
+      relatedResources:
+        $ref: '#/schemas/BriefResponseByResourceMap'
+    required:
+      - data
+      - relatedResources
+    example: '{
+                "data": {
+                  "name": "My New Team",
+                  "_type": "team",
+                  "_id": "team_m5m6xeycotd99j8hp4unzkkxmo",
+                  "_members": {
+                    "users": [],
+                    "apiTokens": [
+                      {
+                        "id": "api_token_53ms671qjbdm7dacu1yiaautfw",
+                        "role": "reader"
+                      }
+                    ],
+                    "ssoGroups": []
+                  },
+                  "_assets": {
+                    "tests": [],
+                    "packages": [],
+                    "sourceRepositories": []
+                  }
+                },
+                "relatedResources": {
+                  "api_token_53ms671qjbdm7dacu1yiaautfw": {
+                    "name": "readonly",
+                    "_type": "api_token",
+                    "_id": "api_token_53ms671qjbdm7dacu1yiaautfw"
+                  }
+                }
+              }'
+  TeamRequest:
+    type: object
+    properties:
+      name:
+        type: string
+    required:
+      - name
+    example: '{
+                "name": "My New Team"
+              }'
+  TestBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_TestType'
+          - default: test
+      _id:
+        type: string
+      source:
+        $ref: '#/schemas/SourceBrief'
+    required:
+      - _id
+      - _type
+      - name
+      - source
+  TestTypeResponse:
+    type: string
+    enum:
+      - build_from_sources
+      - packaged
+      - no_code
+  UnauthorizedErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  UnprocessableContentErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      role:
+        $ref: '#/schemas/UserRoleV2'
+    required:
+      - id
+      - role
+  UserBriefResponse:
+    type: object
+    properties:
+      email:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_UserType'
+          - default: user
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - email
+  UserRoleV2:
+    type: string
+    enum:
+      - administrator
+      - leader
+      - tester
+      - contributor
+      - viewer
+  _ApiTokenType:
+    type: string
+    enum:
+      - api_token
+  _ManagedLocationType:
+    type: string
+    enum:
+      - managed_location
+  _PackageType:
+    type: string
+    enum:
+      - package
+  _PrivateLocationType:
+    type: string
+    enum:
+      - private_location
+  _SourceRepositoryType:
+    type: string
+    enum:
+      - source_repository
+  _SsoGroupType:
+    type: string
+    enum:
+      - sso_group
+  _TeamType:
+    type: string
+    enum:
+      - team
+  _TestType:
+    type: string
+    enum:
+      - test
+  _UserType:
+    type: string
+    enum:
+      - user

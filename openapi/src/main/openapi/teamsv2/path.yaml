@@ -1,0 +1,95 @@
+teams:
+  get:
+    summary: Retrieve the list of teams
+    description: |
+      Retrieve the list of all the teams that can be seen by the API token.
+
+      Requires at least the `Read` role on each team, otherwise they are omitted from the response.
+    tags:
+      - Teams
+    security:
+      - ApiKeyAuth: []
+    operationId: TeamReadAll
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/TeamReadAllResponse'
+  post:
+    summary: Create a new team
+    description: |
+      Create a new team with a given name.
+
+      Requires the organization role `Administrate`.
+    tags:
+      - Teams
+    security:
+      - ApiKeyAuth: []
+    operationId: TeamCreateOne
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: 'components.yaml#/schemas/TeamRequest'
+      required: true
+    responses:
+      '201':
+        description: TeamCreateOne 201 response
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/TeamCreateOneResponse'
+team:
+  get:
+    summary: Retrieve a specific team
+    description: |
+      Get the details of a specific team by its ID.
+
+      Requires the Read role on the team or Global.
+    tags:
+      - Teams
+    security:
+      - ApiKeyAuth: []
+    operationId: TeamReadOne
+    parameters:
+      - name: teamId
+        in: path
+        schema:
+          type: string
+        required: true
+    responses:
+      '200':
+        description: TeamReadOne 200 response
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/TeamReadOneResponse'
+  delete:
+    summary: Delete a specific team
+    description: |
+      Delete a team by its ID.
+
+      Use the force parameter to delete all the related assets.
+
+      Require the Administrate role on the team or Global.
+    tags:
+      - Teams
+    security:
+      - ApiKeyAuth: []
+    operationId: TeamDeleteOne
+    parameters:
+      - name: teamId
+        in: path
+        schema:
+          type: string
+        required: true
+      - name: force
+        in: query
+        schema:
+          type: boolean
+          default: false
+        required: true
+    responses:
+      '204':
+        description: TeamDeleteOne 204 response

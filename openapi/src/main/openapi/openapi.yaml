@@ -71,6 +71,10 @@ paths:
     $ref: 'pkgs/path.yaml#/packages.upload'
 
   # Teams
+  /v2/teams:
+    $ref: 'teamsv2/path.yaml#/teams'
+  /v2/teams/{teamId}:
+    $ref: 'teamsv2/path.yaml#/team'
   /teams:
     $ref: 'teams/path.yaml#/teams'
 
