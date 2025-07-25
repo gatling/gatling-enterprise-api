@@ -1,0 +1,514 @@
+schemas:
+  ApiTokenBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_ApiTokenType'
+          - default: api_token
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  ApiTokenCreateOneResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/schemas/ApiTokenDetailsResponse'
+      secrets:
+        $ref: '#/schemas/ApiTokenSecretsResponse'
+      relatedResources:
+        $ref: '#/schemas/BriefResponseByResourceMap'
+    required:
+      - data
+      - relatedResources
+      - secrets
+    example: '{
+                "data": {
+                  "name": "CI/CD Pipeline Token",
+                  "roles": {
+                    "global": [
+                      "starter"
+                    ],
+                    "teams": []
+                  },
+                  "_type": "api_token",
+                  "_id": "api_token_sad4neaj4fr6f8gt8k4ez7jpnr",
+                  "_tokenHint": "R34hxoZH"
+                },
+                "relatedResources": {}
+              }'
+  ApiTokenDetailsResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      roles:
+        $ref: '#/schemas/ApiTokenRolesDto'
+      _type:
+        allOf:
+          - $ref: '#/schemas/_ApiTokenType'
+          - default: api_token
+      _id:
+        type: string
+      _tokenHint:
+        type: string
+      _lastUsedAt:
+        type: string
+        format: date-time
+    required:
+      - _id
+      - _tokenHint
+      - _type
+      - name
+      - roles
+  ApiTokenItemResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_ApiTokenType'
+          - default: api_token
+      _id:
+        type: string
+      _tokenHint:
+        type: string
+      _lastUsedAt:
+        type: string
+        format: date-time
+    required:
+      - _id
+      - _tokenHint
+      - _type
+      - name
+  ApiTokenReadAllResponse:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/schemas/ApiTokenItemResponse'
+      relatedResources:
+        $ref: '#/schemas/BriefResponseByResourceMap'
+    required:
+      - data
+      - relatedResources
+    example: '{
+                "data": [
+                  {
+                    "name": "QA Team Token",
+                    "_type": "api_token",
+                    "_id": "api_token_eagcm71reigw3pujtp4zm8ntxy",
+                    "_tokenHint": "-yzJG-OH",
+                    "_lastUsedAt": "2025-07-23T12:17:56.141Z"
+                  },
+                  {
+                    "name": "CI/CD Pipeline Token",
+                    "_type": "api_token",
+                    "_id": "api_token_sad4neaj4fr6f8gt8k4ez7jpnr",
+                    "_tokenHint": "R34hxoZH"
+                  }
+                ],
+                "relatedResources": {}
+              }'
+  ApiTokenRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      roles:
+        $ref: '#/schemas/ApiTokenRolesDto'
+    required:
+      - name
+      - roles
+    example: '{
+                "name": "CI/CD Pipeline Token",
+                "roles": {
+                  "global": [
+                    "starter"
+                  ],
+                  "teams": []
+                }
+              }'
+  ApiTokenRole:
+    type: string
+    enum:
+      - reader
+      - starter
+      - configurer
+      - administrator
+  ApiTokenRolesDto:
+    type: object
+    properties:
+      global:
+        type: array
+        items:
+          $ref: '#/schemas/ApiTokenRole'
+      teams:
+        type: array
+        items:
+          $ref: '#/schemas/ApiTokenTeamRoleMember'
+  ApiTokenSecretsResponse:
+    type: object
+    properties:
+      token:
+        type: string
+    required:
+      - token
+  ApiTokenTeamRoleMember:
+    type: object
+    properties:
+      id:
+        type: string
+      role:
+        $ref: '#/schemas/ApiTokenRole'
+    required:
+      - id
+      - role
+  ApiTokenUpdateOneResponse:
+    type: object
+    properties:
+      data:
+        $ref: '#/schemas/ApiTokenDetailsResponse'
+      relatedResources:
+        $ref: '#/schemas/BriefResponseByResourceMap'
+    required:
+      - data
+      - relatedResources
+    example: '{
+                "data": {
+                  "name": "CI/CD Pipeline Token",
+                  "roles": {
+                    "global": [
+                      "starter"
+                    ],
+                    "teams": []
+                  },
+                  "_type": "api_token",
+                  "_id": "api_token_sad4neaj4fr6f8gt8k4ez7jpnr",
+                  "_tokenHint": "R34hxoZH"
+                },
+                "relatedResources": {}
+              }'
+  BadRequestErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  BriefResponse:
+    oneOf:
+      - $ref: '#/schemas/ApiTokenBriefResponse'
+      - $ref: '#/schemas/ManagedLocationBriefResponse'
+      - $ref: '#/schemas/PackageBriefResponse'
+      - $ref: '#/schemas/PrivateLocationBriefResponse'
+      - $ref: '#/schemas/SourceRepositoryBriefResponse'
+      - $ref: '#/schemas/SsoGroupBriefResponse'
+      - $ref: '#/schemas/TeamBriefResponse'
+      - $ref: '#/schemas/TestBriefResponse'
+      - $ref: '#/schemas/UserBriefResponse'
+  BriefResponseByResourceMap:
+    type: object
+    additionalProperties:
+      $ref: '#/schemas/BriefResponse'
+  ConflictErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  ErrorContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  ForbiddenErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  GoneErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  ManagedLocationBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_ManagedLocationType'
+          - default: managed_location
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  NotFoundErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  PackageBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_PackageType'
+          - default: package
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  PrivateLocationBriefResponse:
+    type: object
+    properties:
+      _type:
+        allOf:
+          - $ref: '#/schemas/_PrivateLocationType'
+          - default: private_location
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+  SimpleDictionary:
+    type: object
+    additionalProperties:
+      type: string
+  SourceBrief:
+    type: object
+    properties:
+      type:
+        $ref: '#/schemas/TestTypeResponse'
+    required:
+      - type
+  SourceRepositoryBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_SourceRepositoryType'
+          - default: source_repository
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  SsoGroupBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_SsoGroupType'
+          - default: sso_group
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  TeamBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_TeamType'
+          - default: team
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - name
+  TestBriefResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_TestType'
+          - default: test
+      _id:
+        type: string
+      source:
+        $ref: '#/schemas/SourceBrief'
+    required:
+      - _id
+      - _type
+      - name
+      - source
+  TestTypeResponse:
+    type: string
+    enum:
+      - build_from_sources
+      - packaged
+      - no_code
+  UnauthorizedErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  UnprocessableContentErrorResponseContent:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      reasons:
+        type: array
+        items:
+          $ref: '#/schemas/ErrorContent'
+      values:
+        $ref: '#/schemas/SimpleDictionary'
+    required:
+      - code
+      - message
+  UserBriefResponse:
+    type: object
+    properties:
+      email:
+        type: string
+      _type:
+        allOf:
+          - $ref: '#/schemas/_UserType'
+          - default: user
+      _id:
+        type: string
+    required:
+      - _id
+      - _type
+      - email
+  _ApiTokenType:
+    type: string
+    enum:
+      - api_token
+  _ManagedLocationType:
+    type: string
+    enum:
+      - managed_location
+  _PackageType:
+    type: string
+    enum:
+      - package
+  _PrivateLocationType:
+    type: string
+    enum:
+      - private_location
+  _SourceRepositoryType:
+    type: string
+    enum:
+      - source_repository
+  _SsoGroupType:
+    type: string
+    enum:
+      - sso_group
+  _TeamType:
+    type: string
+    enum:
+      - team
+  _TestType:
+    type: string
+    enum:
+      - test
+  _UserType:
+    type: string
+    enum:
+      - user

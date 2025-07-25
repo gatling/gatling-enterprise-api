@@ -1,5 +1,6 @@
 teams:
   get:
+    deprecated: true
     summary: Retrieve the list of teams
     tags:
       - Teams
