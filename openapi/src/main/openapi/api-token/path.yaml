@@ -1,0 +1,117 @@
+api-tokens:
+  get:
+    summary: Retrieve the list of Api Tokens
+    description: |
+      Retrieve the list of all the Api Tokens for an organization.
+
+      Requires the organization role `Administrate`.
+    tags:
+      - ApiTokens
+    security:
+      - ApiKeyAuth: []
+    operationId: ApiTokenReadAll
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/ApiTokenReadAllResponse'
+  post:
+    summary: Create a new Api Token
+    description: |
+      Create a new Api Token with roles.
+      
+      Cannot create an Api Token with global `Administrate` role.
+
+      Requires the organization role `Administrate`.
+    tags:
+      - ApiTokens
+    security:
+      - ApiKeyAuth: []
+    operationId: ApiTokenCreateOne
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: 'components.yaml#/schemas/ApiTokenRequest'
+      required: true
+    responses:
+      '201':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/ApiTokenCreateOneResponse'
+api-token:
+  put:
+    summary: Update a specific Api Token
+    description: |
+      Update an Api Token by its ID.
+
+      Requires the organization role `Administrate`.
+    tags:
+      - ApiTokens
+    security:
+      - ApiKeyAuth: []
+    operationId: ApiTokenUpdateOne
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: 'components.yaml#/schemas/ApiTokenRequest'
+      required: true
+    parameters:
+      - name: apiTokenId
+        in: path
+        schema:
+          type: string
+        required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/ApiTokenUpdateOneResponse'
+  delete:
+    summary: Delete a specific Api Token
+    description: |
+      Delete an Api Token by its ID.
+
+      Requires the organization role `Administrate`.
+    tags:
+      - ApiTokens
+    security:
+      - ApiKeyAuth: []
+    operationId: ApiTokenDeleteOne
+    parameters:
+      - name: apiTokenId
+        in: path
+        schema:
+          type: string
+        required: true
+    responses:
+      '204':
+        description: ApiTokenDeleteOne 204 response
+api-token.regenerate:
+  post:
+    operationId: ApiTokenRegenerate
+    summary: Regenerate a specific Api Token
+    description: |
+      Regenerate an Api Token by its ID.
+
+      Requires the organization role `Administrate`.
+    tags:
+      - ApiTokens
+    security:
+      - ApiKeyAuth: []
+    parameters:
+      - name: tokenId
+        in: path
+        schema:
+          type: string
+        required: true
+    responses:
+      '200':
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/ApiTokenCreateOneResponse'
