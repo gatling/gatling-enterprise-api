@@ -1,0 +1,4719 @@
+openapi: 3.0.2
+info:
+  title: Gatling Enterprise Cloud API
+  description: Documentation of the public Gatling Enterprise Cloud API. To use this API you will need to generate an API token.
+  version: '2.0.0'
+servers:
+  - url: '{API_URL}/api/public'
+    variables:
+      API_URL:
+        default: API_URL_PLACEHOLDER
+paths:
+  /ping:
+    get:
+      summary: Ping the server
+      description: |
+        Check that the server is responding.
+
+        No permission, no authentication needed.
+      tags:
+        - Default
+      responses:
+        '200':
+          description: The server pinged back
+          content:
+            application/json:
+              schema:
+                type: object
+  /simulations/{simulationId}:
+    get:
+      summary: Retrieve one simulation
+      tags:
+        - Simulations
+      description: |
+        Returns the simulation with the corresponding simulationId.
+
+        Requires at least the `Read` role on the simulation's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: simulationId
+          schema:
+            type: string
+          required: true
+          description: UUID of the simulation
+      responses:
+        '200':
+          description: The simulation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Simulation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /simulations:
+    get:
+      summary: Simulations
+      tags:
+        - Simulations
+      description: |
+        Return the list of all simulations belonging to the API token teams.
+
+        Requires at least the `Read` role on each token's team, otherwise they are omitted from the response.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: An array containing the simulations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Simulation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create a simulation
+      tags:
+        - Simulations
+      description: |
+        Create a new simulation.
+
+        Requires at least the `Configure` role on the simulation's team.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/Simulation'
+      responses:
+        '200':
+          description: The simulation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Simulation'
+  /simulations/{simulationId}/classname:
+    put:
+      summary: Update simulation class name
+      tags:
+        - Simulations
+      description: |
+        Update simulation class name under corresponding simulationId.
+
+        Requires at least the `Configure` role on the simulation's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: simulationId
+          schema:
+            type: string
+          required: true
+          description: UUID of the simulation
+      requestBody:
+        $ref: '#/components/requestBodies/ClassName'
+      responses:
+        '200':
+          description: The simulation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassName'
+  /simulations/team:
+    get:
+      summary: Simulations by Team
+      tags:
+        - Simulations
+      description: |
+        Return the list of the simulations on the given team.
+
+        Requires at least the `Read` role on the given team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: team
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Team ID available using /simulations API or by clicking on the clipboard icon in the teams table
+      responses:
+        '200':
+          description: An array of simulations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Simulation'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /simulations/start:
+    post:
+      summary: Start a simulation
+      description: |
+        Start a simulation.
+
+        Requires at least the `Start` role on the simulation's team.
+      tags:
+        - Simulations
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/simulation'
+      requestBody:
+        $ref: '#/components/requestBodies/StartOptions'
+      responses:
+        '200':
+          description: Start run information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /simulations/abort:
+    post:
+      summary: Stop a run
+      description: |
+        Abort a running simulation.
+
+        Requires at least the `Start` role on the simulation's team.
+      tags:
+        - Simulations
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: Run stopped
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /simulations/abortAll:
+    post:
+      summary: Stop all ongoing runs
+      description: |
+        Abort all ongoing runs in the organization.
+
+        Requires at least the `Start` role on the whole organization.
+      tags:
+        - Simulations
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: All runs stopped
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          description: Error when aborting one or more runs
+  /summaries/requests:
+    get:
+      summary: Summaries requests data
+      description: |-
+        Summaries requests data.
+        Requires at least the `Read` role on the run's team.
+      tags:
+        - Summary
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: number
+          description: 'Timestamp corresponding to the start of the time window you want to select, default value: injection start'
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: number
+          description: 'Timestamp corresponding to the end of the time window you want to select, default value: injection end'
+        - name: scenario
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 'Name of the scenario or ''*'' if you want the stats for every scenario, default value: `*`'
+      responses:
+        '200':
+          description: Summary data, the children can contain others children if you use groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestsSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /runs:
+    get:
+      summary: Simulation Runs
+      tags:
+        - Runs
+      description: |
+        Return the list of the runs for a given simulation.
+
+        Requires at least the `Read` role on the simulation's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/simulation'
+      responses:
+        '200':
+          description: An array of runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Runs'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /run:
+    get:
+      summary: Run
+      tags:
+        - Runs
+      description: |
+        Return the detailed information of a run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: The information of a run.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Run'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /injectors:
+    get:
+      summary: Run Load Generators
+      tags:
+        - Runs
+      description: |
+        Return the list of the load generators for a given run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: An array of load generators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Injector'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /remotes:
+    get:
+      summary: Run Remotes
+      tags:
+        - Runs
+      description: |
+        Return the list of the remotes for a given run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: An array of remotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /hostnames:
+    get:
+      summary: Run Hostnames
+      tags:
+        - Runs
+      description: |
+        Return the list of the hostnames for a given run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: An array of hostnames
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scenarios:
+    get:
+      summary: Run Scenarios
+      tags:
+        - Runs
+      description: |
+        Return the list of the scenarios for a given run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: An array of scenarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /groups:
+    get:
+      summary: Run Groups
+      tags:
+        - Runs
+      description: |
+        Return the list of the groups for a given run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+      responses:
+        '200':
+          description: An array of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /requests:
+    get:
+      summary: Run Requests
+      tags:
+        - Runs
+      description: |
+        Return the list of the requests for a given run.
+
+        Requires at least the `Read` role on the run's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+        - $ref: '#/components/parameters/group'
+      responses:
+        '200':
+          description: An array of requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /metrics:
+    get:
+      summary: List of metrics available
+      tags:
+        - Runs
+      description: |
+        The Metric endpoint returns metrics information.
+
+        Requires at least the `Read` role on the whole organization.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: An array of metrics. If one of the requirement is the scope, you can prefix the metric with one of the scope options ('all.', 'ok.', or 'ko.') when querying a metric; e.g. 'all.req.mean' for the 'req.mean' metric
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metric'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /series:
+    get:
+      summary: Series data of a run
+      description: |
+        Series data of a run.
+
+        Requires at least the `Read` role on the run's team.
+      tags:
+        - Runs
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/run'
+        - name: metric
+          in: query
+          required: true
+          schema:
+            type: string
+          description: One of the metrics returned by the /metrics API. If the metric has the 'scope' requirement, you can prefix it with one of the scope options ('all.', 'ok.', or 'ko.'); e.g. 'all.req.mean' for the 'req.mean' metric. If no scope is prefixed, the default scope is 'all.'
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: number
+          description: 'Timestamp (in milliseconds) corresponding to the start of the window you want to select, default value: injection start'
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: number
+          description: 'Timestamp (in milliseconds) corresponding to the end of the window you want to select, default value: injection end'
+        - name: scenario
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 'Name of the scenario or ''*'' if you want the data for every scenario, check the metrics endpoint to see if it is needed, default value: `*`'
+        - name: group
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |
+            Name of the group. Check the metrics endpoint to see if it is needed.
+            - For metrics which also require the 'request' parameter, specifies which group the request is part of. Use an empty value for requests which are not part of a group. Use '\*' together with the '\*' request parameter value (or omit both parameters) for all requests.
+            - For metrics which don't require the 'request' parameter, specifies the group the metric applies to.
+        - name: request
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |
+            Name of the request. Check the metrics endpoint to see if it is needed.
+
+            The group that the request is part of must also be specified (with an empty value if there is no group); see the 'group' parameter. Use the '\*' value together with the '\*' group parameter value (or omit both parameters) for all requests.
+        - name: remote
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 'Hostname of the remote or ''*'' if you want the data for every remote, check the metrics endpoint to see if it is needed, default value: `*`'
+        - name: node
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 'Hostname of the load load generator or ''*'' if you want the data for every load generator, check the metrics endpoint to see if it is needed, default value: `*`'
+      responses:
+        '200':
+          description: Series data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Series'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /artifacts:
+    get:
+      summary: Retrieve the list of packages
+      tags:
+        - Packages
+      description: |
+        Retrieve the list of all the packages that can be seen by the API token.
+
+        Requires at least the `Read` role on each package's team, otherwise they are omitted from the response.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: The list of packages
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PackageIndex'
+    post:
+      summary: Create a package
+      tags:
+        - Packages
+      description: |
+        Create a new package with a name and the associated teamId.
+        The package won't contain any file yet, you need to upload a file to the package in order to use it.
+
+        Requires at least the `Configure` role on the package's team.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Package'
+      responses:
+        '200':
+          description: The package
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responses-Package'
+  /artifacts/{packageId}:
+    get:
+      summary: Get a package by ID
+      tags:
+        - Packages
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: The package
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responses-Package'
+  /artifacts/{packageId}/content:
+    put:
+      summary: Upload a Package
+      tags:
+        - Packages
+      description: |
+        Upload your package JAR, initializing or overriding the content.
+        Beware, server may respond before consuming all the request body for security requirement,
+        which is not handled properly by all HTTP clients.
+
+        The maximum upload size is 5 GB.
+
+        Requires at least the `Configure` role on the package's team.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: '#/components/parameters/id'
+        - $ref: '#/components/parameters/filename'
+      requestBody:
+        $ref: '#/components/requestBodies/PkgUploadBody'
+      responses:
+        '200':
+          description: The package
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageUpload'
+        '413':
+          description: Uploaded package is too large
+  /teams:
+    get:
+      summary: Retrieve the list of teams
+      tags:
+        - Teams
+      description: |
+        Retrieve the list of all the teams that can be seen by the API token.
+
+        Requires at least the `Read` role on each team, otherwise they are omitted from the response.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: The list of teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Team'
+  /pools:
+    get:
+      summary: Retrieve the list of locations
+      tags:
+        - Locations
+      description: |
+        Retrieve the list of all the locations enabled in this organization.
+
+        Requires at least the `Read` role on any team.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: The list of locations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pool'
+  /search/private-locations:
+    get:
+      summary: Retrieve the list of private locations
+      tags:
+        - Locations
+      description: |
+        Retrieve the list of private locations accessible from the current authentication.
+
+        Requires at least the `Read` role on any team.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: The list of private locations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Location'
+  /sso-group-mappings:
+    get:
+      summary: Retrieve the list of SSO group mappings
+      tags:
+        - SSO Group Mappings
+      description: |
+        Retrieve the list of all SSO group mappings.
+
+        The apiToken must have at least the Administrator role on the teams or Global to be able to read mappings.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: The list of SSO group mappings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SsoGroupMapping'
+                  relatedResources:
+                    type: object
+                    description: Map of team UUIDs to team objects
+                    additionalProperties:
+                      $ref: '#/components/schemas/responses-Team'
+                    example:
+                      31ed3cfb-e6f9-40fd-885e-3ba6a44031ff:
+                        id: 31ed3cfb-e6f9-40fd-885e-3ba6a44031ff
+                        type: team
+                        name: Super team
+                      2252a3b4-052d-4b57-987c-af126d40e12c:
+                        id: 2252a3b4-052d-4b57-987c-af126d40e12c
+                        type: team
+                        name: Marketing team
+    post:
+      summary: Create a new SSO group mapping
+      tags:
+        - SSO Group Mappings
+      description: |
+        Create a new SSO group mapping. Both `globalRole` and `teamRoles` are optional fields, but at least one must be provided.
+
+        The API token must have at least the Administrator role on the teams or Global to be able to write mappings.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SsoGroupMappingCreate'
+      responses:
+        '201':
+          description: SSO group mapping created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SsoGroupMapping'
+                  relatedResources:
+                    type: object
+                    description: Map of team UUIDs to team objects
+                    additionalProperties:
+                      $ref: '#/components/schemas/responses-Team'
+                    example:
+                      31ed3cfb-e6f9-40fd-885e-3ba6a44031ff:
+                        id: 31ed3cfb-e6f9-40fd-885e-3ba6a44031ff
+                        type: team
+                        name: Super team
+                      2252a3b4-052d-4b57-987c-af126d40e12c:
+                        id: 2252a3b4-052d-4b57-987c-af126d40e12c
+                        type: team
+                        name: Marketing team
+  /sso-group-mappings/{ssoGroupMappingId}:
+    get:
+      summary: Retrieve a specific SSO group mapping
+      tags:
+        - SSO Group Mappings
+      description: |
+        Retrieve a specific SSO group mapping by its ID.
+
+        The apiToken must have at least the Administrator role on the teams or Global to be able to read mappings.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: ssoGroupMappingId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the SSO group mapping
+      responses:
+        '200':
+          description: The SSO group mapping
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SsoGroupMapping'
+                  relatedResources:
+                    type: object
+                    description: Map of team UUIDs to team objects
+                    additionalProperties:
+                      $ref: '#/components/schemas/responses-Team'
+                    example:
+                      31ed3cfb-e6f9-40fd-885e-3ba6a44031ff:
+                        id: 31ed3cfb-e6f9-40fd-885e-3ba6a44031ff
+                        type: team
+                        name: Super team
+                      2252a3b4-052d-4b57-987c-af126d40e12c:
+                        id: 2252a3b4-052d-4b57-987c-af126d40e12c
+                        type: team
+                        name: Marketing team
+    put:
+      summary: Update an SSO group mapping
+      tags:
+        - SSO Group Mappings
+      description: |
+        Update an existing SSO group mapping. Both `globalRole` and `teamRoles` are optional fields, but at least one must be provided.
+
+        The apiToken must have at least the Administrator role on the teams or Global to be able to write mappings.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: ssoGroupMappingId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the SSO group mapping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SsoGroupMappingUpdate'
+      responses:
+        '200':
+          description: SSO group mapping updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SsoGroupMapping'
+    delete:
+      summary: Delete an SSO group mapping
+      tags:
+        - SSO Group Mappings
+      description: |
+        Delete an SSO group mapping by its ID.
+
+        The apiToken must have at least the Administrator role on the teams or Global to be able to write mappings.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: ssoGroupMappingId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the SSO group mapping
+      responses:
+        '204':
+          description: SSO group mapping deleted successfully
+  /info:
+    get:
+      summary: Get server informations
+      tags:
+        - Info
+      responses:
+        '200':
+          description: The server information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+  /v2/api-tokens:
+    get:
+      description: |-
+        Retrieve the list of all the API tokens that can be seen by the API token
+
+        Requires at least the `Administrator` role on the organization
+      summary: Retrieve the list of API Tokens
+      operationId: ApiTokenReadAll
+      responses:
+        "200":
+          description: ApiTokenReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTokenReadAllResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - API Tokens
+    post:
+      description: |2-
+         Create a new API Token.
+
+         Requires at least the `Administrator` role on the organization.
+      summary: Create a new API Token
+      operationId: ApiTokenCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiTokenRequest'
+        required: true
+      responses:
+        "201":
+          description: ApiTokenCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTokenCreateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - API Tokens
+  /v2/api-tokens/{apiTokenId}:
+    delete:
+      description: |-
+        Delete the specified API Token
+
+        Requires at least the `Administrator` role on the organization
+      summary: Delete an API Token
+      operationId: ApiTokenDeleteOne
+      parameters:
+        - name: apiTokenId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: ApiTokenDeleteOne 204 response
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - API Tokens
+    put:
+      description: |-
+        Update the specified API Token
+
+        Requires at least the `Administrator` role on the organization
+      summary: Update a specific API Token
+      operationId: ApiTokenUpdateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiTokenRequest'
+        required: true
+      parameters:
+        - name: apiTokenId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ApiTokenUpdateOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTokenUpdateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - API Tokens
+  /v2/api-tokens/{tokenId}/regenerate-token:
+    post:
+      description: |-
+        Regenerate the specified API Token
+
+        Requires at least the `Administrator` role on the organization
+      summary: Regenerate a specific API Token
+      operationId: ApiTokenRegenerate
+      parameters:
+        - name: tokenId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: ApiTokenRegenerate 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiTokenCreateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - API Tokens
+  /v2/source-repositories:
+    get:
+      description: List all the Source Repositories
+      summary: Retrieve the list of Source Repositories
+      operationId: SourceRepositoryReadAll
+      responses:
+        "200":
+          description: SourceRepositoryReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRepositoryReadAllResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Source Repositories
+    post:
+      description: Create a new Source Repository
+      summary: Create a new Source Repository
+      operationId: SourceRepositoryCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceRepositoryRequest'
+        required: true
+      responses:
+        "201":
+          description: SourceRepositoryCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRepositoryCreateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Source Repositories
+  /v2/source-repositories/{sourceRepositoryId}:
+    delete:
+      description: Delete the specified Source Repository
+      summary: Delete a specific Source Repository
+      operationId: SourceRepositoryDeleteOne
+      parameters:
+        - name: sourceRepositoryId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: SourceRepositoryDeleteOne 204 response
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Source Repositories
+    get:
+      description: Get details of a specified Source Repository
+      summary: Get details of a Source Repository
+      operationId: SourceRepositoryReadOne
+      parameters:
+        - name: sourceRepositoryId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: SourceRepositoryReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRepositoryReadOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Source Repositories
+  /v2/teams:
+    get:
+      description: |-
+        Retrieve the list of all the teams that can be seen by the API token
+
+        Requires at least the `Read` role on each team, otherwise they are omitted from the response
+      summary: Retrieve the list of teams
+      operationId: TeamReadAll
+      responses:
+        "200":
+          description: TeamReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamReadAllResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Teams
+    post:
+      description: Create a new team
+      summary: Create a new team
+      operationId: TeamCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamRequest'
+        required: true
+      responses:
+        "201":
+          description: TeamCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamCreateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Teams
+  /v2/teams/{teamId}:
+    delete:
+      description: Delete the specified team
+      summary: Delete a specific team
+      operationId: TeamDeleteOne
+      parameters:
+        - name: teamId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: force
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: true
+      responses:
+        "204":
+          description: TeamDeleteOne 204 response
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Teams
+    get:
+      description: Get details of a specific team
+      summary: Get the details of a specific team
+      operationId: TeamReadOne
+      parameters:
+        - name: teamId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: TeamReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamReadOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Teams
+  /v2/teams/{teamId}/limits:
+    get:
+      description: Get the limits of a specific team
+      summary: Get the limits of a specific team
+      operationId: TeamLimitReadOne
+      parameters:
+        - name: teamId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: TeamLimitReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamLimitReadOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Teams
+    put:
+      description: Update the limits of a specific team
+      summary: Update the limits of a specific team
+      operationId: TeamLimitUpdateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamLimitRequest'
+        required: true
+      parameters:
+        - name: teamId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: TeamLimitUpdateOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamLimitUpdateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Teams
+  /v2/tests:
+    get:
+      description: List all the tests that can be seen by the API token
+      summary: Retrieve the list of tests
+      operationId: TestReadAll
+      parameters:
+        - name: teamId
+          in: query
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+      responses:
+        "200":
+          description: TestReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestReadAllResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Tests
+    post:
+      description: Create a new test
+      summary: Create a new test
+      operationId: TestCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequest'
+        required: true
+      responses:
+        "201":
+          description: TestCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCreateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Tests
+  /v2/tests/{testId}:
+    delete:
+      description: Delete the specified test
+      summary: Delete a specific test
+      operationId: TestDeleteOne
+      parameters:
+        - name: testId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: TestDeleteOne 204 response
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Tests
+    get:
+      description: Get the details of a specified test
+      summary: Get the details of a specific test
+      operationId: TestReadOne
+      parameters:
+        - name: testId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: TestReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestReadOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Tests
+    put:
+      description: Update the specified test
+      summary: Update a specific test
+      operationId: TestUpdateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequest'
+        required: true
+      parameters:
+        - name: testId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: TestUpdateOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestUpdateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Tests
+  /v2/users:
+    get:
+      description: |-
+        List all the Users that the API Token can see
+
+        Requires that your organization has SSO without SSO Mapping
+      summary: Retrieve the list of users
+      operationId: UserReadAll
+      parameters:
+        - name: email_contains
+          in: query
+          schema:
+            type: string
+        - name: teamId
+          in: query
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+      responses:
+        "200":
+          description: UserReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserReadAllResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Users
+    post:
+      description: |-
+        Create a new user
+
+        Requires that your organization has SSO without SSO Mapping
+      summary: Create a new user
+      operationId: UserCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      responses:
+        "201":
+          description: UserCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Users
+  /v2/users/{userId}:
+    delete:
+      description: |-
+        Delete the specified user
+
+        Requires that your organization has SSO without SSO Mapping
+      summary: Delete the specific user
+      operationId: UserDeleteOne
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: UserDeleteOne 204 response
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Users
+    get:
+      description: |-
+        Get the details of the specified user
+
+        Requires that your organization has SSO without SSO Mapping
+      summary: Get the details of a specific user
+      operationId: UserReadOne
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: UserReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserReadOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Users
+    put:
+      description: |-
+        Update the details of the specified user
+
+        Requires that your organization has SSO without SSO Mapping
+      summary: Update the details of a specific user
+      operationId: UserUpdateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: UserUpdateOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdateOneResponse'
+        "400":
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        "401":
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        "403":
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        "404":
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        "409":
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        "410":
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        "422":
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+      tags:
+        - Users
+components:
+  securitySchemes: {ApiKeyAuth: {type: apiKey, in: header, name: authorization}}
+  schemas:
+    CommonSchema:
+      $ref: '#/components/schemas'
+    MeanCpuThreshold:
+      type: object
+      properties:
+        maxPercentage:
+          type: number
+          description: The maximum allowed CPU percentage.
+          example: 90
+    MeanCpuStopCriterion:
+      type: object
+      description: Stop criterion based on CPU usage
+      required:
+        - type
+        - threshold
+        - timeframeInSeconds
+      properties:
+        type:
+          type: string
+          enum:
+            - meanCpu
+          description: Type of the stop criterion.
+        threshold:
+          $ref: '#/components/schemas/MeanCpuThreshold'
+        timeframeInSeconds:
+          type: integer
+          description: Timeframe in seconds to measure the stop criterion.
+          example: 60
+    GlobalErrorRatioThreshold:
+      type: object
+      properties:
+        maxPercentage:
+          type: number
+          description: The maximum allowed error ratio percentage.
+          example: 90
+    GlobalErrorRatioStopCriterion:
+      type: object
+      description: Stop criterion based on global error ratio
+      required:
+        - type
+        - threshold
+        - timeframeInSeconds
+      properties:
+        type:
+          type: string
+          enum:
+            - globalErrorRatio
+          description: Type of the stop criterion.
+        threshold:
+          $ref: '#/components/schemas/GlobalErrorRatioThreshold'
+        timeframeInSeconds:
+          type: integer
+          description: Timeframe in seconds to measure the stop criterion.
+          example: 60
+    GlobalResponseTimeThreshold:
+      type: object
+      properties:
+        percentile:
+          type: number
+          description: The percentile for response time threshold.
+          example: 99.9
+        maxMilliseconds:
+          type: number
+          description: The maximum allowed response time in milliseconds.
+          example: 300
+    GlobalResponseTimeStopCriterion:
+      type: object
+      description: Stop criterion based on global response time
+      required:
+        - type
+        - threshold
+        - timeframeInSeconds
+      properties:
+        type:
+          type: string
+          enum:
+            - globalResponseTime
+          description: Type of the stop criterion.
+        threshold:
+          $ref: '#/components/schemas/GlobalResponseTimeThreshold'
+        timeframeInSeconds:
+          type: integer
+          description: Timeframe in seconds to measure the stop criterion.
+          example: 100
+    StopCriteria:
+      type: array
+      description: An array of stop criteria that includes CPU, error ratio, and response time configurations. This is particularly useful for terminating test runs once key performance metrics exceed acceptable limits.
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/MeanCpuStopCriterion'
+          - $ref: '#/components/schemas/GlobalErrorRatioStopCriterion'
+          - $ref: '#/components/schemas/GlobalResponseTimeStopCriterion'
+    Simulation:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Simulation ID
+          example: a00589b6-3014-41be-97e3-c2784965e4fe
+        teamId:
+          type: string
+          description: Team ID
+          example: 424571fe-2351-4f3f-ae6a-04b7105f7157
+        name:
+          type: string
+          description: Simulation name
+          example: My Gatling simulation
+        className:
+          type: string
+          description: Fully qualified class name
+          example: computerdatabase.BasicSimulation
+        build:
+          type: object
+          properties:
+            pkgId:
+              type: string
+              description: Id of an already created package you want to link. The package needs to have an uploaded file
+              example: 424571fe-2351-4f3f-ae6a-04b7105f7157
+        systemProperties:
+          type: object
+          description: Map of key/values corresponding to the Java system properties used by this simulation
+        environmentVariables:
+          type: object
+          description: Map of key/values corresponding to the environment variables used by this simulation
+        ignoreGlobalProperties:
+          type: boolean
+          description: Set to true if you want to ignore the global JVM options, Java system properties and environment variables set by your organization
+          example: false
+        meaningfulTimeWindow:
+          type: object
+          properties:
+            rampUp:
+              type: integer
+              description: The first seconds you want to exclude from the run
+            rampDown:
+              type: integer
+              description: The last seconds you want to exclude from the run
+        hostsByPool:
+          type: object
+          description: ID of the public location you want to use
+          properties:
+            poolId:
+              type: object
+              properties:
+                size:
+                  type: integer
+                weight:
+                  type: number
+        hostsByLocation:
+          type: object
+          description: ID of the location you want to use
+          properties:
+            poolId:
+              type: object
+              properties:
+                size:
+                  type: integer
+                weight:
+                  type: number
+        usePoolWeights:
+          type: boolean
+          description: Set to true if you want to enable the custom weight set on your locations
+          example: false
+        usePoolDedicatedIps:
+          type: boolean
+          description: Use dedicated IPs for your load generators
+          example: false
+        stopCriteria:
+          $ref: '#/components/schemas/StopCriteria'
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+    HostsByPool:
+      type: object
+      description: Number of hosts and associated weight, for each location used. The weights must sum up to 100 if specified.
+      additionalProperties:
+        type: object
+        required:
+          - size
+        properties:
+          size:
+            type: integer
+          weight:
+            type: number
+      example:
+        4a399023-d443-3a58-864f-3919760df78b:
+          size: 1
+          weight: 60
+        c800b6d9-163b-3db7-928f-86c1470a9542:
+          size: 1
+          weight: 40
+    ClassName:
+      type: object
+      required:
+        - className
+      properties:
+        className:
+          type: string
+          description: Fully qualified class name of a simulation
+          example: computerdatabase.BasicSimulation
+    CustomDictionary:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        customProperty: value
+    SimulationWithManagedLocations:
+      type: object
+      properties:
+        extraSystemProperties:
+          $ref: '#/components/schemas/CustomDictionary'
+        extraEnvironmentVariables:
+          $ref: '#/components/schemas/CustomDictionary'
+        overrideHostsByPool:
+          $ref: '#/components/schemas/HostsByPool'
+        title:
+          type: string
+          description: Run title
+          example: My run title
+        description:
+          type: string
+          description: Run description
+          example: My run description
+    RunSummary:
+      type: object
+      properties:
+        className:
+          type: string
+        runId:
+          type: string
+        reportsPath:
+          type: string
+          description: The path to the reports page for this run
+        runsPath:
+          type: string
+          description: The path to the runs page for this simulation
+    ResponseTimeRequestsSummary:
+      type: object
+      properties:
+        mean:
+          type: number
+        stdDev:
+          type: number
+        percentiles:
+          type: array
+          description: 'This array contains the following percentiles: min, 25%, 50%, 75%, 80%, 85%, 90%, 95%, 99%, 99.9%, 99.99%, max'
+          items:
+            type: number
+    InRequestsSummary:
+      type: object
+      properties:
+        counts:
+          type: object
+          properties:
+            ok:
+              type: integer
+              description: Total number of ok responses received by the load generators
+            ko:
+              type: integer
+              description: Total number of ko responses received by the load generators
+            koPercent:
+              type: number
+              description: Percentage (between 0 and 100) of ko responses compared to the total number of responses received by the load generators
+            total:
+              type: integer
+              description: Total number of responses received by the load generators
+        rps:
+          type: object
+          properties:
+            ok:
+              type: number
+            ko:
+              type: number
+            total:
+              type: number
+    OutRequestsSummary:
+      type: object
+      properties:
+        counts:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total number of requests sent by the load generators
+        rps:
+          type: object
+          properties:
+            total:
+              type: number
+    RequestsSummaryChild:
+      type: object
+      properties:
+        name:
+          type: string
+        index:
+          type: integer
+        incrementalId:
+          type: integer
+        responseTime:
+          $ref: '#/components/schemas/ResponseTimeRequestsSummary'
+        in:
+          $ref: '#/components/schemas/InRequestsSummary'
+        out:
+          $ref: '#/components/schemas/OutRequestsSummary'
+    RequestsSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        responseTime:
+          $ref: '#/components/schemas/ResponseTimeRequestsSummary'
+        in:
+          $ref: '#/components/schemas/InRequestsSummary'
+        out:
+          $ref: '#/components/schemas/OutRequestsSummary'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestsSummaryChild'
+    Runs:
+      type: object
+      properties:
+        id:
+          type: string
+        incrementalId:
+          type: integer
+        injectStart:
+          type: number
+        injectEnd:
+          type: number
+    TriggerByApiToken:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - apiToken
+        tokenId:
+          type: string
+          description: ID of the API Token which triggered the run
+        name:
+          type: string
+          description: name of the API Token  which triggered the run
+    TriggerByUser:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - user
+        userId:
+          type: string
+          description: ID of the user who triggered the run
+    Run:
+      type: object
+      properties:
+        runId:
+          type: string
+        incrementalId:
+          type: integer
+        buildStart:
+          type: number
+        buildEnd:
+          type: number
+        deployStart:
+          type: number
+        deployEnd:
+          type: number
+        injectStart:
+          type: number
+        injectEnd:
+          type: number
+        status:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 15
+          description: |
+            * `0`: Building
+            * `1`: Deploying
+            * `2`: Deployed
+            * `3`: Injecting
+            * `4`: Successful
+            * `5`: AssertionsSuccessful
+            * `6`: AutomaticallyStopped
+            * `7`: Stopped
+            * `8`: AssertionsFailed
+            * `9`: Timeout
+            * `10`: BuildFailed
+            * `11`: Broken
+            * `12`: DeploymentFailed
+            * `13`: InsufficientLicense
+            * `15`: StopRequested
+        error:
+          type: string
+        runSnapshot:
+          type: object
+          properties:
+            simulationName:
+              type: string
+            systemProperties:
+              $ref: '#/components/schemas/CustomDictionary'
+            environmentVariables:
+              $ref: '#/components/schemas/CustomDictionary'
+            simulationClass:
+              type: string
+            trigger:
+              oneOf:
+                - $ref: '#/components/schemas/TriggerByApiToken'
+                - $ref: '#/components/schemas/TriggerByUser'
+            usePoolWeights:
+              type: boolean
+            poolSnapshots:
+              type: array
+              items:
+                type: object
+                properties:
+                  poolId:
+                    type: string
+                  poolName:
+                    type: string
+                  size:
+                    type: integer
+                  weight:
+                    type: integer
+                  dedicatedIps:
+                    type: array
+                    items:
+                      type: string
+            artifactId:
+              type: string
+            stopCriteria:
+              $ref: '#/components/schemas/StopCriteria'
+        comments:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+        assertions:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+              result:
+                type: boolean
+              actualValue:
+                type: number
+        scenario:
+          type: string
+        group:
+          type: string
+        request:
+          type: string
+    Injector:
+      type: object
+      properties:
+        pool:
+          type: string
+          description: Name of the location containing the load generator
+        hostname:
+          type: string
+          description: Hostname of the load generator
+    Metric:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Metric name
+        requirements:
+          type: array
+          description: List of requirements to fetch the metric
+          items:
+            type: string
+    Series:
+      type: object
+      properties:
+        resolution:
+          type: integer
+          enum:
+            - 1
+            - 5
+            - 20
+            - 80
+            - 320
+          description: Describe how many seconds of data are represented by each value
+        name:
+          type: string
+          description: Label associated with the series. Mostly useful when several series are returned for a given metric (e.g. metrics which return different series per scenario).
+        start:
+          type: number
+          description: Timestamp corresponding to the start time of the injection
+        offset:
+          type: integer
+          description: Offset between the start time of the injection and the first data returned by the API
+        values:
+          type: array
+          items:
+            type: string
+    PackageIndex:
+      type: object
+      description: Package that can be used by a simulation
+      required:
+        - id
+        - name
+        - teamId
+      properties:
+        id:
+          type: string
+          description: Package ID
+          example: 0164293d-d15a-465f-8f40-41a2133fb35e
+        name:
+          type: string
+          description: Package name
+          example: maven-sample
+        teamId:
+          type: string
+          description: Package team ID
+          example: 424571fe-2351-4f3f-ae6a-04b7105f7157
+        filename:
+          type: string
+          description: Name of the uploaded file
+          example: maven-sample-1.0.0-shaded.jar
+    Package:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Package name
+          example: My Gatling package
+        storageType:
+          type: string
+          description: 'Package type: private or public'
+          example: public
+        teamId:
+          type: string
+          description: Package team ID, omit if global team
+          example: 424571fe-2351-4f3f-ae6a-04b7105f7157
+    PackageFile:
+      type: object
+      description: Package file
+      properties:
+        filename:
+          type: string
+          description: Name of the uploaded file
+          example: maven-sample-1.0.0-shaded.jar
+        version:
+          type: string
+          description: Package gatling version
+          example: 3.7.3
+        checksum:
+          type: string
+          description: Package checksum
+          example: 3y8Jb7JBQPE/UBvj3vUf2A==
+        lastUpdated:
+          type: number
+          description: last update timestamp
+          example: 1640102835073
+    responses-Package:
+      type: object
+      description: Package that can be used by a simulation
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Package ID
+          example: 0164293d-d15a-465f-8f40-41a2133fb35e
+        name:
+          type: string
+          description: Package name
+          example: maven-sample
+        teamId:
+          type: string
+          description: Package team ID
+          example: 424571fe-2351-4f3f-ae6a-04b7105f7157
+        file:
+          $ref: '#/components/schemas/PackageFile'
+    PackageUpload:
+      type: object
+      description: Package that have been uploaded
+      required:
+        - id
+        - filename
+        - contentLength
+      properties:
+        id:
+          type: string
+          description: Package ID
+          example: 0164293d-d15a-465f-8f40-41a2133fb35e
+        filename:
+          type: string
+          description: Name of the uploaded file
+          example: maven-sample-1.0.0-shaded.jar
+        contentLength:
+          type: number
+          description: Content length of the uploaded file in bytes
+          example: '15000'
+    Team:
+      type: object
+      description: Description of a team
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Team ID
+          example: 0164293d-d15a-465f-8f40-41a2133fb35e
+        name:
+          type: string
+          description: Team name
+          example: Default team
+    Pool:
+      type: object
+      description: Description of a location
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Location ID
+          example: 0164293d-d15a-465f-8f40-41a2133fb35e
+        name:
+          type: string
+          description: Location name
+          example: US East - N. Virginia
+        code:
+          type: number
+          description: |
+            Type of location.
+
+            - `2`: AWS region
+          example: 2
+        countryCode:
+          type: string
+          description: Country in which the location is located (ISO-3166 2 letters country code)
+          example: US
+    Location:
+      type: object
+      description: Description of a private location
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          description: Location ID
+          example: prl_my_private_location
+        organizationSlug:
+          type: string
+          description: The unique slug of the organization owning this location
+          example: gatling-corp
+        type:
+          type: string
+          description: Type of the private location
+          example: aws
+        description:
+          type: string
+          description: The description of the location
+          example: My first private location
+    SsoGroupMapping:
+      type: object
+      description: Description of an SSO group mapping
+      required:
+        - id
+        - group
+        - type
+      properties:
+        id:
+          type: string
+          description: SSO group mapping ID
+          example: 0164293d-d15a-465f-8f40-41a2133fb35e
+        group:
+          type: string
+          description: SSO group name
+          example: MyGroup
+        type:
+          type: string
+          enum:
+            - sso-group-mapping
+        globalRole:
+          type: string
+          description: Global role assigned to the group
+          enum:
+            - Administrator
+            - Leader
+            - Contributor
+            - Viewer
+        teamRoles:
+          type: object
+          description: Team roles assigned to the group
+          additionalProperties:
+            type: string
+            description: Role name
+            enum:
+              - Team Administrator
+              - Team Leader
+              - Team Contributor
+              - Team Viewer
+          example:
+            31ed3cfb-e6f9-40fd-885e-3ba6a44031ff: Team Viewer
+            2252a3b4-052d-4b57-987c-af126d40e12c: Team Administrator
+    responses-Team:
+      type: object
+      description: Description of a team
+      required:
+        - id
+        - type
+        - name
+      properties:
+        id:
+          type: string
+          description: Team ID
+          example: 31ed3cfb-e6f9-40fd-885e-3ba6a44031ff
+        type:
+          type: string
+          description: Resource type
+          example: team
+        name:
+          type: string
+          description: Team name
+          example: Super team
+    SsoGroupMappingCreate:
+      type: object
+      description: Request body for creating an SSO group mapping
+      required:
+        - group
+        - type
+      properties:
+        group:
+          type: string
+          description: SSO group name
+          example: Marketing
+        type:
+          type: string
+          description: Resource type
+          example: sso-group-mapping
+        globalRole:
+          type: string
+          description: Global role assigned to the group
+          enum:
+            - Administrator
+            - Leader
+            - Contributor
+            - Viewer
+        teamRoles:
+          type: object
+          description: Team roles assigned to the group
+          additionalProperties:
+            type: string
+            description: Role name
+            enum:
+              - Team Administrator
+              - Team Leader
+              - Team Contributor
+              - Team Viewer
+          example:
+            31ed3cfb-e6f9-40fd-885e-3ba6a44031ff: Team Viewer
+            2252a3b4-052d-4b57-987c-af126d40e12c: Team Administrator
+    SsoGroupMappingUpdate:
+      type: object
+      description: Request body for updating an SSO group mapping
+      required:
+        - group
+        - type
+      properties:
+        group:
+          type: string
+          description: SSO group name
+          example: Marketing
+        type:
+          type: string
+          description: Resource type
+          example: sso-group-mapping
+        globalRole:
+          type: string
+          description: Global role assigned to the group
+          enum:
+            - Administrator
+            - Leader
+            - Contributor
+            - Viewer
+        teamRoles:
+          type: object
+          description: Team roles assigned to the group
+          additionalProperties:
+            type: string
+            description: Role name
+            enum:
+              - Team Administrator
+              - Team Leader
+              - Team Contributor
+              - Team Viewer
+          example:
+            31ed3cfb-e6f9-40fd-885e-3ba6a44031ff: Team Viewer
+            2252a3b4-052d-4b57-987c-af126d40e12c: Team Administrator
+    VersionSupported:
+      type: object
+      description: Bound versions
+      properties:
+        min:
+          type: string
+          description: Minimum version supported
+        max:
+          type: string
+          description: Maximum version supported
+    InfoResponse:
+      type: object
+      description: Server informations
+      required:
+        - versions
+      properties:
+        versions:
+          type: object
+          description: Versions supported
+          required:
+            - java
+          properties:
+            java:
+              $ref: '#/components/schemas/VersionSupported'
+    ApiTokenBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ApiTokenType'
+            - default: api_token
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    ApiTokenCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ApiTokenDetailsResponse'
+        secrets:
+          $ref: '#/components/schemas/ApiTokenSecretsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+        - secrets
+    ApiTokenDetailsResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        roles:
+          $ref: '#/components/schemas/ApiTokenRolesDto'
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ApiTokenType'
+            - default: api_token
+        _id:
+          type: string
+        _tokenHint:
+          type: string
+        _lastUsedAt:
+          type: string
+          format: date-time
+      required:
+        - _id
+        - _tokenHint
+        - _type
+        - name
+        - roles
+    ApiTokenItemResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ApiTokenType'
+            - default: api_token
+        _id:
+          type: string
+        _tokenHint:
+          type: string
+        _lastUsedAt:
+          type: string
+          format: date-time
+      required:
+        - _id
+        - _tokenHint
+        - _type
+        - name
+    ApiTokenReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTokenItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    ApiTokenRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        roles:
+          $ref: '#/components/schemas/ApiTokenRolesDto'
+      required:
+        - name
+        - roles
+    ApiTokenRole:
+      type: string
+      enum:
+        - reader
+        - starter
+        - configurer
+        - administrator
+    ApiTokenRolesDto:
+      type: object
+      properties:
+        global:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTokenRole'
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiTokenTeamRoleMember'
+    ApiTokenSecretsResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    ApiTokenTeamRoleMember:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          $ref: '#/components/schemas/ApiTokenRole'
+      required:
+        - id
+        - role
+    ApiTokenUpdateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ApiTokenDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    BadRequestErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    BriefResponse:
+      oneOf:
+        - $ref: '#/components/schemas/ApiTokenBriefResponse'
+        - $ref: '#/components/schemas/ManagedLocationBriefResponse'
+        - $ref: '#/components/schemas/PackageBriefResponse'
+        - $ref: '#/components/schemas/PrivateLocationBriefResponse'
+        - $ref: '#/components/schemas/SourceRepositoryBriefResponse'
+        - $ref: '#/components/schemas/SsoGroupBriefResponse'
+        - $ref: '#/components/schemas/TeamBriefResponse'
+        - $ref: '#/components/schemas/TestBriefResponse'
+        - $ref: '#/components/schemas/UserBriefResponse'
+    BriefResponseByResourceMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/BriefResponse'
+    ConflictErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    ErrorContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    ForbiddenErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    GoneErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    ManagedLocationBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ManagedLocationType'
+            - default: managed_location
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    NotFoundErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    PackageBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_PackageType'
+            - default: package
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    PrivateLocationBriefResponse:
+      type: object
+      properties:
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_PrivateLocationType'
+            - default: private_location
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+    SimpleDictionary:
+      type: object
+      additionalProperties:
+        type: string
+    SourceBrief:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TestTypeResponse'
+      required:
+        - type
+    SourceRepositoryBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourceRepositoryType'
+            - default: source_repository
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    SsoGroupBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SsoGroupType'
+            - default: sso_group
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    TeamBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TeamType'
+            - default: team
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    TestBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        source:
+          $ref: '#/components/schemas/SourceBrief'
+      required:
+        - _id
+        - _type
+        - name
+        - source
+    TestTypeResponse:
+      type: string
+      enum:
+        - build_from_sources
+        - packaged
+        - no_code
+    UnauthorizedErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    UnprocessableContentErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    UserBriefResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - email
+    _ApiTokenType:
+      type: string
+      enum:
+        - api_token
+    _ManagedLocationType:
+      type: string
+      enum:
+        - managed_location
+    _PackageType:
+      type: string
+      enum:
+        - package
+    _PrivateLocationType:
+      type: string
+      enum:
+        - private_location
+    _SourceRepositoryType:
+      type: string
+      enum:
+        - source_repository
+    _SsoGroupType:
+      type: string
+      enum:
+        - sso_group
+    _TeamType:
+      type: string
+      enum:
+        - team
+    _TestType:
+      type: string
+      enum:
+        - test
+    _UserType:
+      type: string
+      enum:
+        - user
+    Remote:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+    SourceRepositoryAssets:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            type: string
+      required:
+        - tests
+    SourceRepositoryCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SourceRepositoryDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    SourceRepositoryDetailsResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        teamId:
+          type: string
+        remote:
+          $ref: '#/components/schemas/Remote'
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourceRepositoryType'
+            - default: source_repository
+        _id:
+          type: string
+        _assets:
+          $ref: '#/components/schemas/SourceRepositoryAssets'
+      required:
+        - _assets
+        - _id
+        - _type
+        - name
+        - remote
+        - teamId
+    SourceRepositoryItemResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourceRepositoryType'
+            - default: source_repository
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    SourceRepositoryReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceRepositoryItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    SourceRepositoryReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SourceRepositoryDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    SourceRepositoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        teamId:
+          type: string
+        remote:
+          $ref: '#/components/schemas/Remote'
+      required:
+        - name
+        - remote
+        - teamId
+    ApiToken:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          $ref: '#/components/schemas/ApiTokenRole'
+      required:
+        - id
+        - role
+    Credits:
+      type: object
+      properties:
+        quota:
+          type: integer
+          minimum: 0
+          format: int32
+      required:
+        - quota
+    Members:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        apiTokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiToken'
+        ssoGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/SsoGroup'
+      required:
+        - apiTokens
+        - ssoGroups
+        - users
+    SsoGroup:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRoleV2'
+      required:
+        - id
+        - role
+    TeamAssets:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            type: string
+        packages:
+          type: array
+          items:
+            type: string
+        sourceRepositories:
+          type: array
+          items:
+            type: string
+      required:
+        - packages
+        - sourceRepositories
+        - tests
+    TeamCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TeamDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TeamDetailsResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TeamType'
+            - default: team
+        _id:
+          type: string
+        _limits:
+          $ref: '#/components/schemas/TeamLimits'
+        _members:
+          $ref: '#/components/schemas/Members'
+        _assets:
+          $ref: '#/components/schemas/TeamAssets'
+      required:
+        - _assets
+        - _id
+        - _limits
+        - _members
+        - _type
+        - name
+    TeamItemResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TeamType'
+            - default: team
+        _id:
+          type: string
+        _limits:
+          $ref: '#/components/schemas/TeamLimits'
+      required:
+        - _id
+        - _limits
+        - _type
+        - name
+    TeamLimitReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TeamLimitResponse'
+      required:
+        - data
+    TeamLimitRequest:
+      type: object
+      properties:
+        credits:
+          $ref: '#/components/schemas/Credits'
+    TeamLimitResponse:
+      type: object
+      properties:
+        credits:
+          $ref: '#/components/schemas/Credits'
+    TeamLimitUpdateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TeamLimitResponse'
+      required:
+        - data
+    TeamLimits:
+      type: object
+      properties:
+        credits:
+          $ref: '#/components/schemas/Credits'
+    TeamReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TeamReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TeamDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TeamRequest:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRoleV2'
+      required:
+        - id
+        - role
+    UserRoleV2:
+      type: string
+      enum:
+        - administrator
+        - leader
+        - tester
+        - contributor
+        - viewer
+    BuildFromSource:
+      type: object
+      properties:
+        sourceRepositoryId:
+          type: string
+        buildTool:
+          $ref: '#/components/schemas/BuildToolDto'
+        simulation:
+          type: string
+        workingDirectory:
+          type: string
+        branch:
+          type: string
+      required:
+        - buildTool
+        - simulation
+        - sourceRepositoryId
+    BuildToolDto:
+      oneOf:
+        - $ref: '#/components/schemas/BuildToolDtoMaven'
+        - $ref: '#/components/schemas/BuildToolDtoMavenWrapper'
+        - $ref: '#/components/schemas/BuildToolDtoGradle'
+        - $ref: '#/components/schemas/BuildToolDtoGradleWrapper'
+        - $ref: '#/components/schemas/BuildToolDtoSbt'
+        - $ref: '#/components/schemas/BuildToolDtoNpm'
+      discriminator:
+        propertyName: type
+        mapping:
+          maven: '#/components/schemas/BuildToolDtoMaven'
+          sbt: '#/components/schemas/BuildToolDtoSbt'
+          gradle: '#/components/schemas/BuildToolDtoGradle'
+          maven-wrapper: '#/components/schemas/BuildToolDtoMavenWrapper'
+          npm: '#/components/schemas/BuildToolDtoNpm'
+          gradle-wrapper: '#/components/schemas/BuildToolDtoGradleWrapper'
+    BuildToolDtoGradle:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoGradleWrapper:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoMaven:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoMavenWrapper:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    BuildToolDtoNpm:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoSbt:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    DefaultCommand:
+      type: object
+    DistributionDto:
+      type: object
+      properties:
+        loadGenerators:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoadGeneratorDto'
+      required:
+        - loadGenerators
+    ExecutionDto:
+      type: object
+      properties:
+        meaningfulTimeWindow:
+          $ref: '#/components/schemas/MeaningfulTimeWindowDto'
+        systemProperties:
+          $ref: '#/components/schemas/SimpleDictionary'
+        environmentVariables:
+          $ref: '#/components/schemas/SimpleDictionary'
+        ignoreGlobalProperties:
+          type: boolean
+          default: false
+        stopCriteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/StopCriterionDto'
+      required:
+        - environmentVariables
+        - ignoreGlobalProperties
+        - meaningfulTimeWindow
+        - stopCriteria
+        - systemProperties
+    GlobalErrorRatioCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxPercentageThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    GlobalResponseTimeCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxMillisecondsThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    InstanceDto:
+      type: object
+      properties:
+        count:
+          type: integer
+          minimum: 1
+          format: int32
+      required:
+        - count
+    LoadGeneratorDto:
+      type: object
+      properties:
+        locationId:
+          type: string
+        instance:
+          $ref: '#/components/schemas/InstanceDto'
+        loadPercentage:
+          type: integer
+          format: int32
+      required:
+        - instance
+        - locationId
+    MaxMillisecondsThresholdDto:
+      type: object
+      properties:
+        percentile:
+          type: number
+          format: double
+        maxMilliseconds:
+          type: integer
+          format: int32
+      required:
+        - maxMilliseconds
+        - percentile
+    MaxPercentageThresholdDto:
+      type: object
+      properties:
+        maxPercentage:
+          type: number
+          format: double
+      required:
+        - maxPercentage
+    MeanCpuCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxPercentageThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    MeaningfulTimeWindowDto:
+      type: object
+      properties:
+        rampUpSeconds:
+          type: integer
+          format: int32
+        rampDownSeconds:
+          type: integer
+          format: int32
+      required:
+        - rampDownSeconds
+        - rampUpSeconds
+    NoCode:
+      type: object
+      properties:
+        teamId:
+          type: string
+      required:
+        - teamId
+    Packaged:
+      type: object
+      properties:
+        packageId:
+          type: string
+        simulation:
+          type: string
+      required:
+        - packageId
+        - simulation
+    SourceDetails:
+      oneOf:
+        - $ref: '#/components/schemas/SourceDetailsBuild_from_sources'
+        - $ref: '#/components/schemas/SourceDetailsPackaged'
+        - $ref: '#/components/schemas/SourceDetailsNo_code'
+      discriminator:
+        propertyName: type
+        mapping:
+          build_from_sources: '#/components/schemas/SourceDetailsBuild_from_sources'
+          packaged: '#/components/schemas/SourceDetailsPackaged'
+          no_code: '#/components/schemas/SourceDetailsNo_code'
+    SourceDetailsBuild_from_sources:
+      allOf:
+        - $ref: '#/components/schemas/BuildFromSource'
+        - $ref: '#/components/schemas/SourceDetailsMixin'
+    SourceDetailsMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    SourceDetailsNo_code:
+      allOf:
+        - $ref: '#/components/schemas/NoCode'
+        - $ref: '#/components/schemas/SourceDetailsMixin'
+    SourceDetailsPackaged:
+      allOf:
+        - $ref: '#/components/schemas/Packaged'
+        - $ref: '#/components/schemas/SourceDetailsMixin'
+    SourceItem:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TestTypeResponse'
+      required:
+        - type
+    StopCriterionDto:
+      oneOf:
+        - $ref: '#/components/schemas/StopCriterionDtoMeanCpu'
+        - $ref: '#/components/schemas/StopCriterionDtoGlobalErrorRatio'
+        - $ref: '#/components/schemas/StopCriterionDtoGlobalResponseTime'
+      discriminator:
+        propertyName: type
+        mapping:
+          meanCpu: '#/components/schemas/StopCriterionDtoMeanCpu'
+          globalErrorRatio: '#/components/schemas/StopCriterionDtoGlobalErrorRatio'
+          globalResponseTime: '#/components/schemas/StopCriterionDtoGlobalResponseTime'
+    StopCriterionDtoGlobalErrorRatio:
+      allOf:
+        - $ref: '#/components/schemas/GlobalErrorRatioCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoGlobalResponseTime:
+      allOf:
+        - $ref: '#/components/schemas/GlobalResponseTimeCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoMeanCpu:
+      allOf:
+        - $ref: '#/components/schemas/MeanCpuCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    TestCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TestDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TestDetailsResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        distribution:
+          $ref: '#/components/schemas/DistributionDto'
+        execution:
+          $ref: '#/components/schemas/ExecutionDto'
+        source:
+          $ref: '#/components/schemas/SourceDetails'
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        _teamId:
+          type: string
+      required:
+        - _id
+        - _teamId
+        - _type
+        - distribution
+        - execution
+        - name
+        - source
+    TestItemResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        _teamId:
+          type: string
+        source:
+          $ref: '#/components/schemas/SourceItem'
+      required:
+        - _id
+        - _teamId
+        - _type
+        - name
+        - source
+    TestReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TestReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TestDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TestRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        distribution:
+          $ref: '#/components/schemas/DistributionDto'
+        execution:
+          $ref: '#/components/schemas/ExecutionDto'
+        source:
+          $ref: '#/components/schemas/SourceDetails'
+      required:
+        - distribution
+        - execution
+        - name
+        - source
+    TestUpdateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TestDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TeamRoleMember:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRoleV2'
+      required:
+        - id
+        - role
+    UserCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/UserDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    UserDetailsResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        roles:
+          $ref: '#/components/schemas/UserRoles'
+        firstName:
+          type: string
+        lastName:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - email
+        - firstName
+        - lastName
+        - roles
+    UserItemResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        roles:
+          $ref: '#/components/schemas/UserRoles'
+        firstName:
+          type: string
+        lastName:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - email
+        - firstName
+        - lastName
+        - roles
+    UserReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    UserReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/UserDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    UserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        roles:
+          $ref: '#/components/schemas/UserRoles'
+        firstName:
+          type: string
+        lastName:
+          type: string
+      required:
+        - email
+        - firstName
+        - lastName
+        - roles
+    UserRoles:
+      type: object
+      properties:
+        global:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRoleV2'
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamRoleMember'
+    UserUpdateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/UserDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            AccessUnauthorized:
+              value:
+                error: invalid_request
+                error_description: 'i.g.f.a.s.UnauthorizedException$: Access unauthorized'
+  requestBodies:
+    Simulation:
+      description: The definition of a simulation
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Simulation name
+                example: My Gatling simulation
+              className:
+                type: string
+                description: Fully qualified class name
+                example: computerdatabase.BasicSimulation
+              build:
+                type: object
+                properties:
+                  pkgId:
+                    type: string
+                    description: Id of an already created package you want to link. The package needs to have an uploaded file
+                    example: 424571fe-2351-4f3f-ae6a-04b7105f7157
+              systemProperties:
+                type: object
+                description: Map of key/values corresponding to the Java system properties used by this simulation
+              environmentVariables:
+                type: object
+                description: Map of key/values corresponding to the environment variables used by this simulation
+              ignoreGlobalProperties:
+                type: boolean
+                description: Set to true if you want to ignore the global JVM options and Java system properties set by your organization
+                example: false
+              meaningfulTimeWindow:
+                type: object
+                properties:
+                  rampUp:
+                    type: integer
+                    description: The first seconds you want to exclude from the run
+                  rampDown:
+                    type: integer
+                    description: The last seconds you want to exclude from the run
+              hostsByPool:
+                $ref: '#/components/schemas/HostsByPool'
+              usePoolWeights:
+                type: boolean
+                description: Set to true if you want to enable the custom weight set on your locations
+                example: false
+              usePoolDedicatedIps:
+                type: boolean
+                description: Use dedicated IPs for your load generators
+                example: false
+              stopCriteria:
+                $ref: '#/components/schemas/StopCriteria'
+    ClassName:
+      description: Allow to update a simulation class name
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClassName'
+    StartOptions:
+      description: Allows to merge additional Java system properties, environment variables and set custom host configuration for a run
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimulationWithManagedLocations'
+          examples:
+            SimulationWithManagedLocations:
+              value:
+                extraSystemProperties:
+                  customProperty: value
+                extraEnvironmentVariables:
+                  customProperty: value
+                overrideHostsByPool:
+                  4a399023-d443-3a58-864f-3919760df78b:
+                    size: 1
+                    weight: 60
+                  c800b6d9-163b-3db7-928f-86c1470a9542:
+                    size: 1
+                    weight: 40
+                title: My run title
+                description: My run description
+            SimulationWithPrivateLocations:
+              value:
+                extraSystemProperties:
+                  customProperty: value
+                extraEnvironmentVariables:
+                  customProperty: value
+                title: My run title
+                description: My run description
+    PkgUploadBody:
+      description: Bundled simulation shaded JAR (maximum size of 5GB)
+      required: true
+      content:
+        application/x-java-archive:
+          schema:
+            type: string
+            format: binary
+        application/x-jar:
+          schema:
+            type: string
+            format: binary
+        application/java-archive:
+          schema:
+            type: string
+            format: binary
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+  parameters:
+    simulation:
+      name: simulation
+      in: query
+      required: true
+      schema:
+        type: string
+      description: Simulation ID available using /simulations API or by clicking on the clipboard icon in the simulations table
+    run:
+      name: run
+      in: query
+      required: true
+      schema:
+        type: string
+      description: run ID available using /runs API or by clicking on the clipboard icon in the runs table
+    group:
+      name: group
+      in: query
+      schema:
+        type: string
+      description: group available using /groups API
+    id:
+      name: packageId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Package ID available by clicking on the clipboard icon in the packages table
+      example: 12eef26c-1078-498b-8788-5e74b5e64f46
+    filename:
+      name: filename
+      in: query
+      required: true
+      schema:
+        type: string
+      description: Package filename
+      example: maven-sample-1.0.0-shaded.jar
