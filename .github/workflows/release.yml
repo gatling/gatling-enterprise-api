@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '25'
           #cache: No cache for release! We want clean and full release!
 
       - name: Setup sbt
