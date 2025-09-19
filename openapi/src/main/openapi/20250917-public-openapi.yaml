@@ -891,6 +891,8 @@ paths:
 
         Requires at least the `Administrator` role on the organization
       summary: Retrieve the list of API Tokens
+      security:
+        - ApiKeyAuth: []
       operationId: ApiTokenReadAll
       responses:
         "200":
@@ -949,6 +951,8 @@ paths:
 
          Requires at least the `Administrator` role on the organization.
       summary: Create a new API Token
+      security:
+        - ApiKeyAuth: []
       operationId: ApiTokenCreateOne
       requestBody:
         content:
@@ -1014,6 +1018,8 @@ paths:
 
         Requires at least the `Administrator` role on the organization
       summary: Delete an API Token
+      security:
+        - ApiKeyAuth: []
       operationId: ApiTokenDeleteOne
       parameters:
         - name: apiTokenId
@@ -1074,6 +1080,8 @@ paths:
 
         Requires at least the `Administrator` role on the organization
       summary: Update a specific API Token
+      security:
+        - ApiKeyAuth: []
       operationId: ApiTokenUpdateOne
       requestBody:
         content:
@@ -1145,6 +1153,8 @@ paths:
 
         Requires at least the `Administrator` role on the organization
       summary: Regenerate a specific API Token
+      security:
+        - ApiKeyAuth: []
       operationId: ApiTokenRegenerate
       parameters:
         - name: tokenId
@@ -1207,6 +1217,8 @@ paths:
     get:
       description: List all the Source Repositories
       summary: Retrieve the list of Source Repositories
+      security:
+        - ApiKeyAuth: []
       operationId: SourceRepositoryReadAll
       responses:
         "200":
@@ -1262,6 +1274,8 @@ paths:
     post:
       description: Create a new Source Repository
       summary: Create a new Source Repository
+      security:
+        - ApiKeyAuth: []
       operationId: SourceRepositoryCreateOne
       requestBody:
         content:
@@ -1324,6 +1338,8 @@ paths:
     delete:
       description: Delete the specified Source Repository
       summary: Delete a specific Source Repository
+      security:
+        - ApiKeyAuth: []
       operationId: SourceRepositoryDeleteOne
       parameters:
         - name: sourceRepositoryId
@@ -1381,6 +1397,8 @@ paths:
     get:
       description: Get details of a specified Source Repository
       summary: Get details of a Source Repository
+      security:
+        - ApiKeyAuth: []
       operationId: SourceRepositoryReadOne
       parameters:
         - name: sourceRepositoryId
@@ -1445,6 +1463,8 @@ paths:
         Retrieve the list of all the teams that can be seen by the API token
 
         Requires at least the `Read` role on each team, otherwise they are omitted from the response
+      security:
+        - ApiKeyAuth: []
       summary: Retrieve the list of teams
       operationId: TeamReadAll
       responses:
@@ -1501,6 +1521,8 @@ paths:
     post:
       description: Create a new team
       summary: Create a new team
+      security:
+        - ApiKeyAuth: []
       operationId: TeamCreateOne
       requestBody:
         content:
@@ -1563,6 +1585,8 @@ paths:
     delete:
       description: Delete the specified team
       summary: Delete a specific team
+      security:
+        - ApiKeyAuth: []
       operationId: TeamDeleteOne
       parameters:
         - name: teamId
@@ -1626,6 +1650,8 @@ paths:
     get:
       description: Get details of a specific team
       summary: Get the details of a specific team
+      security:
+        - ApiKeyAuth: []
       operationId: TeamReadOne
       parameters:
         - name: teamId
@@ -1688,6 +1714,8 @@ paths:
     get:
       description: Get the limits of a specific team
       summary: Get the limits of a specific team
+      security:
+        - ApiKeyAuth: []
       operationId: TeamLimitReadOne
       parameters:
         - name: teamId
@@ -1749,6 +1777,8 @@ paths:
     put:
       description: Update the limits of a specific team
       summary: Update the limits of a specific team
+      security:
+        - ApiKeyAuth: []
       operationId: TeamLimitUpdateOne
       requestBody:
         content:
@@ -1817,6 +1847,8 @@ paths:
     get:
       description: List all the tests that can be seen by the API token
       summary: Retrieve the list of tests
+      security:
+        - ApiKeyAuth: []
       operationId: TestReadAll
       parameters:
         - name: teamId
@@ -1881,6 +1913,8 @@ paths:
     post:
       description: Create a new test
       summary: Create a new test
+      security:
+        - ApiKeyAuth: []
       operationId: TestCreateOne
       requestBody:
         content:
@@ -1943,6 +1977,8 @@ paths:
     delete:
       description: Delete the specified test
       summary: Delete a specific test
+      security:
+        - ApiKeyAuth: []
       operationId: TestDeleteOne
       parameters:
         - name: testId
@@ -2000,6 +2036,8 @@ paths:
     get:
       description: Get the details of a specified test
       summary: Get the details of a specific test
+      security:
+        - ApiKeyAuth: []
       operationId: TestReadOne
       parameters:
         - name: testId
@@ -2061,6 +2099,8 @@ paths:
     put:
       description: Update the specified test
       summary: Update a specific test
+      security:
+        - ApiKeyAuth: []
       operationId: TestUpdateOne
       requestBody:
         content:
@@ -2132,6 +2172,8 @@ paths:
 
         Requires that your organization has SSO without SSO Mapping
       summary: Retrieve the list of users
+      security:
+        - ApiKeyAuth: []
       operationId: UserReadAll
       parameters:
         - name: email_contains
@@ -2203,6 +2245,8 @@ paths:
 
         Requires that your organization has SSO without SSO Mapping
       summary: Create a new user
+      security:
+        - ApiKeyAuth: []
       operationId: UserCreateOne
       requestBody:
         content:
@@ -2268,6 +2312,8 @@ paths:
 
         Requires that your organization has SSO without SSO Mapping
       summary: Delete the specific user
+      security:
+        - ApiKeyAuth: []
       operationId: UserDeleteOne
       parameters:
         - name: userId
@@ -2328,6 +2374,8 @@ paths:
 
         Requires that your organization has SSO without SSO Mapping
       summary: Get the details of a specific user
+      security:
+        - ApiKeyAuth: []
       operationId: UserReadOne
       parameters:
         - name: userId
@@ -2392,6 +2440,8 @@ paths:
 
         Requires that your organization has SSO without SSO Mapping
       summary: Update the details of a specific user
+      security:
+        - ApiKeyAuth: []
       operationId: UserUpdateOne
       requestBody:
         content:
@@ -2457,10 +2507,12 @@ paths:
       tags:
         - Users
 components:
-  securitySchemes: {ApiKeyAuth: {type: apiKey, in: header, name: authorization}}
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: authorization
   schemas:
-    CommonSchema:
-      $ref: '#/components/schemas'
     MeanCpuThreshold:
       type: object
       properties:
