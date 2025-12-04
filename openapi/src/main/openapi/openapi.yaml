@@ -2593,8 +2593,6 @@ components:
           $ref: '#/components/schemas/CustomDictionary'
         extraEnvironmentVariables:
           $ref: '#/components/schemas/CustomDictionary'
-        overrideHostsByPool:
-          $ref: '#/components/schemas/HostsByPool'
         title:
           type: string
           description: Run title
@@ -4764,13 +4762,6 @@ components:
                   customProperty: value
                 extraEnvironmentVariables:
                   customProperty: value
-                overrideHostsByPool:
-                  4a399023-d443-3a58-864f-3919760df78b:
-                    size: 1
-                    weight: 60
-                  c800b6d9-163b-3db7-928f-86c1470a9542:
-                    size: 1
-                    weight: 40
                 title: My run title
                 description: My run description
             SimulationWithPrivateLocations:
