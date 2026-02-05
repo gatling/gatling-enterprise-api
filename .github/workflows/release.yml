@@ -61,15 +61,20 @@ jobs:
           fi
 
       - name: Publish on CodeArtifact (prod/us-east-1)
+        env:
+          DOMAIN: ${{ secrets.AWS_CODEARTIFACT_DOMAIN }}
+          DOMAIN_OWNER: ${{ secrets.AWS_CODEARTIFACT_OWNER }}
+          REPOSITORY: ${{ steps.release.outputs.repository }}
+          VERSION: ${{ steps.release.outputs.version }}
         run: |
           aws \
             --region us-east-1 \
             codeartifact update-package-versions-status \
-            --domain ${{ secrets.AWS_CODEARTIFACT_DOMAIN }} \
-            --domain-owner ${{ secrets.AWS_CODEARTIFACT_OWNER }} \
-            --repository ${{ steps.release.outputs.repository }} \
+            --domain "$DOMAIN" \
+            --domain-owner "$DOMAIN_OWNER" \
+            --repository "$REPOSITORY" \
             --format maven \
             --namespace io.gatling.enterprise \
             --package gatling-enterprise-api \
-            --versions "${{ steps.release.outputs.version }}" \
+            --versions "$VERSION" \
             --target-status Published
