@@ -27,30 +27,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: '25'
-          cache: 'sbt'
-
-      - name: Setup sbt
-        uses: sbt/setup-sbt@v1
-
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Preprocess with SBT
-        run: >
-          sbt
-          'set openapi / Preprocess / target := (openapi / target).value / "public" / "openapi"'
-          'openapi / Preprocess / preprocess'
+      - name: Prepare OpenAPI files
+        run: |
+          mkdir -p public/openapi
+          # Path breakdown: 
+          # openapi/ = SBT subproject dir
+          # src/main/openapi/ = OpenAPI source folder
+          cp openapi/src/main/openapi/openapi.json public/openapi/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./openapi/target/public
+          path: ./public
 
       - name: Deploy to GitHub Pages
         id: deployment
