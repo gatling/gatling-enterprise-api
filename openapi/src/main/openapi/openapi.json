@@ -650,117 +650,57 @@
         ]
       }
     },
-    "/ping": {
+    "/v2/locations": {
       "get": {
-        "description": "Check that the server is responding.\nNo permission, no authentication needed.",
-        "summary": "Ping the server",
-        "operationId": "InfoPingV1",
-        "responses": {
-          "200": {
-            "description": "InfoPingV1 200 response"
-          },
-          "400": {
-            "description": "400 Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
-                }
-              }
+        "description": "List all the locations that can be seen by the API token",
+        "summary": "Retrieve the list of locations",
+        "operationId": "LocationReadAll",
+        "parameters": [
+          {
+            "name": "artifact-format",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ArtifactFormatEnum"
             }
           },
-          "401": {
-            "description": "UnauthorizedError 401 response"
-          },
-          "403": {
-            "description": "ForbiddenError 403 response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ForbiddenErrorResponseContent"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "NotFoundError 404 response"
-          },
-          "500": {
-            "description": "GenericServerError 500 response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
-                }
-              }
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationTypeEnum"
             }
           }
-        },
-        "tags": [
-          "Default"
-        ]
-      }
-    },
-    "/search/private-locations": {
-      "get": {
-        "description": "Retrieve the list of private locations accessible from the current authentication.\n\nRequires at least the `Read` role on any team.",
-        "summary": "Retrieve the list of private locations",
-        "operationId": "LocationReadPrivateV1",
+        ],
         "responses": {
           "200": {
-            "description": "LocationReadPrivateV1 200 response",
+            "description": "LocationReadAll 200 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PrivateLocationsV1Response"
-                },
-                "examples": {
-                  "Example of list of private locations": {
-                    "value": {
-                      "data": [
-                        {
-                          "id": "prl_aws_javascript",
-                          "organizationSlug": "gatling",
-                          "type": "aws"
-                        },
-                        {
-                          "id": "prl_aws_classic",
-                          "organizationSlug": "gatling",
-                          "type": "aws"
-                        }
-                      ]
-                    }
-                  }
+                  "$ref": "#/components/schemas/LocationReadAllResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "400 Response",
+            "description": "BadRequestError 400 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
                 }
               }
             }
           },
           "401": {
-            "description": "UnauthorizedError 401 response"
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
           },
           "403": {
             "description": "ForbiddenError 403 response",
@@ -773,14 +713,41 @@
             }
           },
           "404": {
-            "description": "NotFoundError 404 response"
-          },
-          "500": {
-            "description": "GenericServerError 500 response",
+            "description": "NotFoundError 404 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ConflictError 409 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictErrorResponseContent"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "GoneError 410 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoneErrorResponseContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "UnprocessableContentError 422 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
                 }
               }
             }
@@ -2170,41 +2137,41 @@
         ]
       }
     },
-    "/sso-group-mappings": {
+    "/v2/sso-groups": {
       "get": {
-        "description": "Retrieve the list of all SSO group mappings.\n\nThe API token must have at least the `Administrator` role on the teams or `Global` to be able to read mappings.",
-        "summary": "Retrieve the list of SSO group mappings",
-        "operationId": "SsoGroupMappingReadAllV1",
+        "description": "List all the SSO Groups",
+        "summary": "Retrieve the list of SSO groups",
+        "operationId": "SsoGroupReadAll",
         "responses": {
           "200": {
-            "description": "SsoGroupMappingReadAllV1 200 response",
+            "description": "SsoGroupReadAll 200 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SsoGroupMappingReadAllAndRelatedResourcesV1Response"
+                  "$ref": "#/components/schemas/SsoGroupReadAllResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "400 Response",
+            "description": "BadRequestError 400 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
                 }
               }
             }
           },
           "401": {
-            "description": "UnauthorizedError 401 response"
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
           },
           "403": {
             "description": "ForbiddenError 403 response",
@@ -2217,7 +2184,14 @@
             }
           },
           "404": {
-            "description": "NotFoundError 404 response"
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
           },
           "409": {
             "description": "ConflictError 409 response",
@@ -2239,19 +2213,19 @@
               }
             }
           },
-          "500": {
-            "description": "GenericServerError 500 response",
+          "422": {
+            "description": "UnprocessableContentError 422 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
                 }
               }
             }
           }
         },
         "tags": [
-          "SSO Group Mappings"
+          "SSO Groups"
         ],
         "security": [
           {
@@ -2260,14 +2234,14 @@
         ]
       },
       "post": {
-        "description": "Create a new SSO group mapping. Both `globalRole` and `teamRoles` are optional fields, but at least one must be provided.\n\nThe API token must have at least the `Administrator` role on the teams or `Global` to be able to write mappings.",
-        "summary": "Create a new SSO group mapping",
-        "operationId": "SsoGroupMappingCreateV1",
+        "description": "Create a new SSO group",
+        "summary": "Create a new SSO group",
+        "operationId": "SsoGroupCreateOne",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SsoGroupMappingUpsertV1Request"
+                "$ref": "#/components/schemas/SsoGroupRequest"
               }
             }
           },
@@ -2275,34 +2249,34 @@
         },
         "responses": {
           "201": {
-            "description": "SsoGroupMappingCreateV1 201 response",
+            "description": "SsoGroupCreateOne 201 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SsoGroupMappingAndRelatedResourcesV1Response"
+                  "$ref": "#/components/schemas/SsoGroupCreateOneResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "400 Response",
+            "description": "BadRequestError 400 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
                 }
               }
             }
           },
           "401": {
-            "description": "UnauthorizedError 401 response"
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
           },
           "403": {
             "description": "ForbiddenError 403 response",
@@ -2315,7 +2289,14 @@
             }
           },
           "404": {
-            "description": "NotFoundError 404 response"
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
           },
           "409": {
             "description": "ConflictError 409 response",
@@ -2337,19 +2318,19 @@
               }
             }
           },
-          "500": {
-            "description": "GenericServerError 500 response",
+          "422": {
+            "description": "UnprocessableContentError 422 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
                 }
               }
             }
           }
         },
         "tags": [
-          "SSO Group Mappings"
+          "SSO Groups"
         ],
         "security": [
           {
@@ -2358,14 +2339,14 @@
         ]
       }
     },
-    "/sso-group-mappings/{ssoGroupMappingId}": {
+    "/v2/sso-groups/{ssoGroupId}": {
       "delete": {
-        "description": "Delete an SSO group mapping by its ID.\n\nThe API token must have at least the `Administrator` role on the teams or `Global` to be able to write mappings.",
-        "summary": "Delete a SSO group mapping",
-        "operationId": "SsoGroupMappingDeleteV1",
+        "description": "Delete the specified SSO group",
+        "summary": "Delete a specific SSO group",
+        "operationId": "SsoGroupDeleteOne",
         "parameters": [
           {
-            "name": "ssoGroupMappingId",
+            "name": "ssoGroupId",
             "in": "path",
             "description": "The ID of the SSO group mapping",
             "schema": {
@@ -2377,27 +2358,27 @@
         ],
         "responses": {
           "204": {
-            "description": "SsoGroupMappingDeleteV1 204 response"
+            "description": "SsoGroupDeleteOne 204 response"
           },
           "400": {
-            "description": "400 Response",
+            "description": "BadRequestError 400 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
                 }
               }
             }
           },
           "401": {
-            "description": "UnauthorizedError 401 response"
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
           },
           "403": {
             "description": "ForbiddenError 403 response",
@@ -2410,7 +2391,14 @@
             }
           },
           "404": {
-            "description": "NotFoundError 404 response"
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
           },
           "409": {
             "description": "ConflictError 409 response",
@@ -2432,19 +2420,19 @@
               }
             }
           },
-          "500": {
-            "description": "GenericServerError 500 response",
+          "422": {
+            "description": "UnprocessableContentError 422 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
                 }
               }
             }
           }
         },
         "tags": [
-          "SSO Group Mappings"
+          "SSO Groups"
         ],
         "security": [
           {
@@ -2453,12 +2441,12 @@
         ]
       },
       "get": {
-        "description": "Retrieve a specific SSO group mapping by its ID.\n\nThe API token must have at least the `Administrator` role on the teams or `Global` to be able to read mappings.",
-        "summary": "Retrieve a specific SSO group mapping",
-        "operationId": "SsoGroupMappingReadOneV1",
+        "description": "Get the details of the specified SSO group",
+        "summary": "Get the details of a specific SSO group",
+        "operationId": "SsoGroupReadOne",
         "parameters": [
           {
-            "name": "ssoGroupMappingId",
+            "name": "ssoGroupId",
             "in": "path",
             "description": "The ID of the SSO group mapping",
             "schema": {
@@ -2470,34 +2458,34 @@
         ],
         "responses": {
           "200": {
-            "description": "SsoGroupMappingReadOneV1 200 response",
+            "description": "SsoGroupReadOne 200 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SsoGroupMappingAndRelatedResourcesV1Response"
+                  "$ref": "#/components/schemas/SsoGroupReadOneResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "400 Response",
+            "description": "BadRequestError 400 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
                 }
               }
             }
           },
           "401": {
-            "description": "UnauthorizedError 401 response"
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
           },
           "403": {
             "description": "ForbiddenError 403 response",
@@ -2510,7 +2498,14 @@
             }
           },
           "404": {
-            "description": "NotFoundError 404 response"
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
           },
           "409": {
             "description": "ConflictError 409 response",
@@ -2532,19 +2527,19 @@
               }
             }
           },
-          "500": {
-            "description": "GenericServerError 500 response",
+          "422": {
+            "description": "UnprocessableContentError 422 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
                 }
               }
             }
           }
         },
         "tags": [
-          "SSO Group Mappings"
+          "SSO Groups"
         ],
         "security": [
           {
@@ -2553,14 +2548,14 @@
         ]
       },
       "put": {
-        "description": "Update an existing SSO group mapping. Both `globalRole` and `teamRoles` are optional fields, but at least one must be provided.\n\nThe API token must have at least the `Administrator` role on the teams or `Global` to be able to write mappings.",
-        "summary": "Update a SSO group mapping",
-        "operationId": "SsoGroupMappingUpdateV1",
+        "description": "Update the details of the specified SSO group",
+        "summary": "Update the details of a specific SSO group",
+        "operationId": "SsoGroupUpdateOne",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SsoGroupMappingUpsertV1Request"
+                "$ref": "#/components/schemas/SsoGroupRequest"
               }
             }
           },
@@ -2568,7 +2563,7 @@
         },
         "parameters": [
           {
-            "name": "ssoGroupMappingId",
+            "name": "ssoGroupId",
             "in": "path",
             "description": "The ID of the SSO group mapping",
             "schema": {
@@ -2580,34 +2575,34 @@
         ],
         "responses": {
           "200": {
-            "description": "SsoGroupMappingUpdateV1 200 response",
+            "description": "SsoGroupUpdateOne 200 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SsoGroupMappingAndRelatedResourcesV1Response"
+                  "$ref": "#/components/schemas/SsoGroupUpdateOneResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "400 Response",
+            "description": "BadRequestError 400 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequestErrorResponseContent"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GenericClientErrorResponseContent"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
                 }
               }
             }
           },
           "401": {
-            "description": "UnauthorizedError 401 response"
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
           },
           "403": {
             "description": "ForbiddenError 403 response",
@@ -2620,7 +2615,14 @@
             }
           },
           "404": {
-            "description": "NotFoundError 404 response"
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
           },
           "409": {
             "description": "ConflictError 409 response",
@@ -2642,19 +2644,19 @@
               }
             }
           },
-          "500": {
-            "description": "GenericServerError 500 response",
+          "422": {
+            "description": "UnprocessableContentError 422 response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericServerErrorResponseContent"
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
                 }
               }
             }
           }
         },
         "tags": [
-          "SSO Group Mappings"
+          "SSO Groups"
         ],
         "security": [
           {
@@ -4961,10 +4963,6 @@
       "ManagedLocationBriefResponse": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Location name"
-          },
           "_type": {
             "allOf": [
               {
@@ -4978,10 +4976,20 @@
           "_id": {
             "type": "string",
             "description": "Location ID"
+          },
+          "_name": {
+            "type": "string",
+            "description": "Location name"
+          },
+          "name": {
+            "type": "string",
+            "description": "This shape is deprecated since 2026.15.0: [CLD-8183] Unused, retained for compatibility",
+            "deprecated": true
           }
         },
         "required": [
           "_id",
+          "_name",
           "_type",
           "name"
         ]
@@ -5434,87 +5442,119 @@
           "plugins"
         ]
       },
-      "ErrorDetail": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "message"
-        ]
-      },
-      "GenericClientErrorResponseContent": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/ErrorContent"
-          }
-        },
-        "required": [
-          "error"
-        ]
-      },
-      "GenericServerErrorResponseContent": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/ErrorContent"
-          }
-        },
-        "required": [
-          "error"
-        ]
-      },
-      "LocationTypeV1Dto": {
+      "ArtifactFormatEnum": {
         "type": "string",
         "enum": [
-          "aws",
-          "dedicated",
-          "kubernetes",
-          "docker",
-          "azure",
-          "gcp"
+          "jvm",
+          "js"
         ]
       },
-      "PrivateLocationIndexV1Response": {
+      "LocationCapabilitiesDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Location ID"
-          },
-          "organizationSlug": {
-            "type": "string",
-            "description": "The unique slug of the organization owning this location"
-          },
-          "type": {
-            "$ref": "#/components/schemas/LocationTypeV1Dto"
-          },
-          "description": {
-            "type": "string",
-            "description": "Run description"
+          "artifactFormats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactFormatEnum"
+            }
           }
         },
         "required": [
-          "id",
-          "organizationSlug",
-          "type"
+          "artifactFormats"
         ]
       },
-      "PrivateLocationsV1Response": {
+      "LocationItemResponse": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PrivateLocationItemResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ManagedLocationItemResponse"
+          }
+        ]
+      },
+      "LocationReadAllResponse": {
         "type": "object",
         "properties": {
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PrivateLocationIndexV1Response"
+              "$ref": "#/components/schemas/LocationItemResponse"
             }
           }
         },
         "required": [
           "data"
+        ]
+      },
+      "LocationTypeEnum": {
+        "type": "string",
+        "enum": [
+          "private_location",
+          "managed_location"
+        ]
+      },
+      "ManagedLocationItemResponse": {
+        "type": "object",
+        "properties": {
+          "_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_ManagedLocationType"
+              },
+              {
+                "default": "managed_location"
+              }
+            ]
+          },
+          "_id": {
+            "type": "string",
+            "description": "Location ID"
+          },
+          "_name": {
+            "type": "string",
+            "description": "Location name"
+          },
+          "_capabilities": {
+            "$ref": "#/components/schemas/LocationCapabilitiesDto"
+          }
+        },
+        "required": [
+          "_capabilities",
+          "_id",
+          "_name",
+          "_type"
+        ]
+      },
+      "PrivateLocationItemResponse": {
+        "type": "object",
+        "properties": {
+          "_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_PrivateLocationType"
+              },
+              {
+                "default": "private_location"
+              }
+            ]
+          },
+          "_id": {
+            "type": "string",
+            "description": "Location ID"
+          },
+          "_description": {
+            "type": "string",
+            "description": "Non-empty trimmed string"
+          },
+          "_capabilities": {
+            "$ref": "#/components/schemas/LocationCapabilitiesDto"
+          }
+        },
+        "required": [
+          "_capabilities",
+          "_id",
+          "_type"
         ]
       },
       "PackageArtifactChecksums": {
@@ -6723,414 +6763,11 @@
           "teamId"
         ]
       },
-      "ApiTokenBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "API Token ID"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "BriefResponseApiToken": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ApiTokenBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseManagedLocation": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ManagedLocationBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseMixin": {
-        "type": "object",
-        "properties": {
-          "_type": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "_type"
-        ]
-      },
-      "BriefResponseOrganization": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/OrganizationBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponsePackage": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PkgBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponsePrivateLocation": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PrivateLocationBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseRun": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/RunBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseSimulation": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/SimulationBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseSourceRepository": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/SourceRepositoryBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseTeam": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/TeamBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "BriefResponseUser": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/UserBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/BriefResponseMixin"
-          }
-        ]
-      },
-      "GlobalRoleV1": {
-        "type": "string",
-        "enum": [
-          "Administrator",
-          "Leader",
-          "Tester",
-          "Contributor",
-          "Viewer",
-          "None"
-        ]
-      },
-      "ManagedLocationBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Location ID"
-          },
-          "name": {
-            "type": "string"
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "Country in which the location is located (ISO-3166 2 letters country code)"
-          }
-        },
-        "required": [
-          "countryCode",
-          "id",
-          "name"
-        ]
-      },
-      "OrganizationBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Organization ID"
-          },
-          "slug": {
-            "type": "string",
-            "description": "The unique slug of the organization owning this location"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "slug"
-        ]
-      },
-      "PkgArtifactBriefDto": {
-        "type": "object",
-        "properties": {
-          "format": {
-            "type": "string",
-            "description": "Package format"
-          }
-        },
-        "required": [
-          "format"
-        ]
-      },
-      "PkgBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Package ID"
-          },
-          "name": {
-            "type": "string"
-          },
-          "storage": {
-            "$ref": "#/components/schemas/PkgStorageBriefUnion"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "storage"
-        ]
-      },
-      "PkgStorageBriefDto": {
-        "type": "object",
-        "properties": {
-          "artifact": {
-            "$ref": "#/components/schemas/PkgArtifactBriefDto"
-          }
-        },
-        "required": [
-          "artifact"
-        ]
-      },
-      "PkgStorageBriefUnion": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/PkgStorageBriefUnionManaged"
-          },
-          {
-            "$ref": "#/components/schemas/PkgStorageBriefUnionPrivate"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "managed": "#/components/schemas/PkgStorageBriefUnionManaged",
-            "private": "#/components/schemas/PkgStorageBriefUnionPrivate"
-          }
-        }
-      },
-      "PkgStorageBriefUnionManaged": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PkgStorageBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/PkgStorageBriefUnionMixin"
-          }
-        ]
-      },
-      "PkgStorageBriefUnionMixin": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "PkgStorageBriefUnionPrivate": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PkgStorageBriefDto"
-          },
-          {
-            "$ref": "#/components/schemas/PkgStorageBriefUnionMixin"
-          }
-        ]
-      },
-      "PrivateLocationBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Location ID"
-          },
-          "name": {
-            "type": "string"
-          },
-          "organizationSlug": {
-            "type": "string",
-            "description": "The unique slug of the organization owning this location"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "organizationSlug"
-        ]
-      },
-      "RunBriefConfigurationResponse": {
-        "type": "object",
-        "properties": {
-          "incrementalId": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "required": [
-          "incrementalId"
-        ]
-      },
-      "RunBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Run ID"
-          },
-          "title": {
-            "type": "string"
-          },
-          "configuration": {
-            "$ref": "#/components/schemas/RunBriefConfigurationResponse"
-          },
-          "execution": {
-            "$ref": "#/components/schemas/RunBriefExecutionResponse"
-          }
-        },
-        "required": [
-          "configuration",
-          "execution",
-          "id",
-          "title"
-        ]
-      },
-      "RunBriefExecutionResponse": {
-        "type": "object",
-        "properties": {
-          "buildStart": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "status": {
-            "type": "integer",
-            "description": "Run status",
-            "format": "int32"
-          }
-        },
-        "required": [
-          "buildStart",
-          "status"
-        ]
-      },
-      "SimulationBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Test ID"
-          },
-          "name": {
-            "type": "string"
-          },
-          "teamName": {
-            "type": "string"
-          },
-          "teamId": {
-            "type": "string",
-            "description": "Team ID"
-          },
-          "simulationType": {
-            "$ref": "#/components/schemas/SimulationTypeResponse"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "simulationType",
-          "teamId",
-          "teamName"
-        ]
-      },
-      "SimulationTypeResponse": {
-        "type": "string",
-        "enum": [
-          "pkg",
-          "noCode",
-          "build"
-        ]
-      },
-      "SourceRepositoryBriefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Source Repository ID"
-          },
-          "name": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "url"
-        ]
-      },
-      "SsoGroupMappingAndRelatedResourcesV1Response": {
+      "SsoGroupCreateOneResponse": {
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/SsoGroupMappingV1Response"
+            "$ref": "#/components/schemas/SsoGroupDetailsResponse"
           },
           "relatedResources": {
             "$ref": "#/components/schemas/BriefResponseByResourceMap"
@@ -7141,13 +6778,77 @@
           "relatedResources"
         ]
       },
-      "SsoGroupMappingReadAllAndRelatedResourcesV1Response": {
+      "SsoGroupDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Non-empty trimmed string"
+          },
+          "roles": {
+            "$ref": "#/components/schemas/UserRolesDto"
+          },
+          "_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_SsoGroupType"
+              },
+              {
+                "default": "sso_group"
+              }
+            ]
+          },
+          "_id": {
+            "type": "string",
+            "description": "The ID of the SSO group mapping"
+          }
+        },
+        "required": [
+          "_id",
+          "_type",
+          "name",
+          "roles"
+        ]
+      },
+      "SsoGroupItemResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Non-empty trimmed string"
+          },
+          "roles": {
+            "$ref": "#/components/schemas/UserRolesDto"
+          },
+          "_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_SsoGroupType"
+              },
+              {
+                "default": "sso_group"
+              }
+            ]
+          },
+          "_id": {
+            "type": "string",
+            "description": "The ID of the SSO group mapping"
+          }
+        },
+        "required": [
+          "_id",
+          "_type",
+          "name",
+          "roles"
+        ]
+      },
+      "SsoGroupReadAllResponse": {
         "type": "object",
         "properties": {
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SsoGroupMappingV1Response"
+              "$ref": "#/components/schemas/SsoGroupItemResponse"
             }
           },
           "relatedResources": {
@@ -7159,124 +6860,94 @@
           "relatedResources"
         ]
       },
-      "SsoGroupMappingUpsertV1Request": {
+      "SsoGroupReadOneResponse": {
         "type": "object",
         "properties": {
-          "group": {
-            "type": "string"
+          "data": {
+            "$ref": "#/components/schemas/SsoGroupDetailsResponse"
           },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/_SsoGroupMapping"
-              },
-              {
-                "default": "sso-group-mapping"
-              }
-            ]
-          },
-          "globalRole": {
-            "$ref": "#/components/schemas/GlobalRoleV1"
-          },
-          "teamRoles": {
-            "$ref": "#/components/schemas/TeamIdTeamRoleV1Dictionary"
+          "relatedResources": {
+            "$ref": "#/components/schemas/BriefResponseByResourceMap"
           }
         },
         "required": [
-          "group",
-          "type"
+          "data",
+          "relatedResources"
         ]
       },
-      "SsoGroupMappingV1Response": {
+      "SsoGroupRequest": {
         "type": "object",
         "properties": {
-          "group": {
-            "type": "string"
-          },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/_SsoGroupMapping"
-              },
-              {
-                "default": "sso-group-mapping"
-              }
-            ]
-          },
-          "globalRole": {
-            "$ref": "#/components/schemas/GlobalRoleV1"
-          },
-          "teamRoles": {
-            "$ref": "#/components/schemas/TeamIdTeamRoleV1Dictionary"
-          },
-          "id": {
+          "name": {
             "type": "string",
-            "description": "The ID of the SSO group mapping"
+            "description": "Non-empty trimmed string"
+          },
+          "roles": {
+            "$ref": "#/components/schemas/UserRolesDto"
           }
         },
         "required": [
-          "group",
-          "id",
-          "type"
+          "name",
+          "roles"
         ]
       },
-      "TeamBriefDto": {
+      "SsoGroupUpdateOneResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SsoGroupDetailsResponse"
+          },
+          "relatedResources": {
+            "$ref": "#/components/schemas/BriefResponseByResourceMap"
+          }
+        },
+        "required": [
+          "data",
+          "relatedResources"
+        ]
+      },
+      "TeamRoleDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "description": "Team ID"
           },
-          "name": {
-            "type": "string"
+          "role": {
+            "$ref": "#/components/schemas/UserRoleV2Enum"
           }
         },
         "required": [
           "id",
-          "name"
+          "role"
         ]
       },
-      "TeamIdTeamRoleV1Dictionary": {
-        "type": "object",
-        "additionalProperties": {
-          "$ref": "#/components/schemas/TeamRoleV1"
-        }
-      },
-      "TeamRoleV1": {
+      "UserRoleV2Enum": {
         "type": "string",
         "enum": [
-          "Team Administrator",
-          "Team Leader",
-          "Team Tester",
-          "Team Contributor",
-          "Team Viewer"
+          "administrator",
+          "leader",
+          "tester",
+          "contributor",
+          "viewer"
         ]
       },
-      "UserBriefDto": {
+      "UserRolesDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "User ID"
+          "global": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserRoleV2Enum"
+            }
           },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamRoleDto"
+            }
           }
-        },
-        "required": [
-          "firstName",
-          "id",
-          "lastName"
-        ]
-      },
-      "_SsoGroupMapping": {
-        "type": "string",
-        "enum": [
-          "sso-group-mapping"
-        ]
+        }
       },
       "ApiToken": {
         "type": "object",
@@ -7343,7 +7014,7 @@
             "description": "The ID of the SSO group mapping"
           },
           "role": {
-            "$ref": "#/components/schemas/UserRoleV2"
+            "$ref": "#/components/schemas/UserRoleV2Enum"
           }
         },
         "required": [
@@ -7578,22 +7249,12 @@
             "description": "User ID"
           },
           "role": {
-            "$ref": "#/components/schemas/UserRoleV2"
+            "$ref": "#/components/schemas/UserRoleV2Enum"
           }
         },
         "required": [
           "id",
           "role"
-        ]
-      },
-      "UserRoleV2": {
-        "type": "string",
-        "enum": [
-          "administrator",
-          "leader",
-          "tester",
-          "contributor",
-          "viewer"
         ]
       },
       "BuildCommandDto": {
@@ -8145,22 +7806,6 @@
           "relatedResources"
         ]
       },
-      "TeamRoleMember": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Team ID"
-          },
-          "role": {
-            "$ref": "#/components/schemas/UserRoleV2"
-          }
-        },
-        "required": [
-          "id",
-          "role"
-        ]
-      },
       "UserCreateOneResponse": {
         "type": "object",
         "properties": {
@@ -8184,7 +7829,7 @@
             "description": "Email address"
           },
           "roles": {
-            "$ref": "#/components/schemas/UserRoles"
+            "$ref": "#/components/schemas/UserRolesDto"
           },
           "firstName": {
             "type": "string"
@@ -8224,7 +7869,7 @@
             "description": "Email address"
           },
           "roles": {
-            "$ref": "#/components/schemas/UserRoles"
+            "$ref": "#/components/schemas/UserRolesDto"
           },
           "firstName": {
             "type": "string"
@@ -8297,7 +7942,7 @@
             "description": "Email address"
           },
           "roles": {
-            "$ref": "#/components/schemas/UserRoles"
+            "$ref": "#/components/schemas/UserRolesDto"
           },
           "firstName": {
             "type": "string"
@@ -8312,23 +7957,6 @@
           "lastName",
           "roles"
         ]
-      },
-      "UserRoles": {
-        "type": "object",
-        "properties": {
-          "global": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserRoleV2"
-            }
-          },
-          "teams": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TeamRoleMember"
-            }
-          }
-        }
       },
       "UserUpdateOneResponse": {
         "type": "object",
@@ -8357,9 +7985,6 @@
   },
   "tags": [
     {
-      "name": "Default"
-    },
-    {
       "name": "Info"
     },
     {
@@ -8375,7 +8000,7 @@
       "name": "Runs"
     },
     {
-      "name": "SSO Group Mappings"
+      "name": "SSO Groups"
     },
     {
       "name": "Source Repositories"
