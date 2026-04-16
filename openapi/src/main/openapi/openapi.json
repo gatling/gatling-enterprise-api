@@ -8,8 +8,8 @@
   "paths": {
     "/v2/api-tokens": {
       "get": {
-        "description": "Retrieve the list of all the API tokens that can be seen by the API token\n\nRequires at least the `Administrator` role on the organization",
-        "summary": "Retrieve the list of API Tokens",
+        "description": "List all the API Tokens that can be seen by the API token.\n\nRequire the `Administrate` role at the global level or on a team to see its tokens; others are omitted.",
+        "summary": "List all the API Tokens that can be seen by the API token",
         "operationId": "ApiTokenReadAll",
         "responses": {
           "200": {
@@ -103,7 +103,7 @@
         ]
       },
       "post": {
-        "description": " Create a new API Token.\n\n Requires at least the `Administrator` role on the organization.",
+        "description": "Create a new API Token.\n\nRequire the `Administrate` role at the global level or on each target team.",
         "summary": "Create a new API Token",
         "operationId": "ApiTokenCreateOne",
         "requestBody": {
@@ -210,8 +210,8 @@
     },
     "/v2/api-tokens/{apiTokenId}": {
       "delete": {
-        "description": "Delete the specified API Token\n\nRequires at least the `Administrator` role on the organization",
-        "summary": "Delete an API Token",
+        "description": "Delete the specified API Token.\n\nRequire the `Administrate` role at the global level or on the token's targeted teams.",
+        "summary": "Delete the specified API Token",
         "operationId": "ApiTokenDeleteOne",
         "parameters": [
           {
@@ -310,8 +310,8 @@
         ]
       },
       "put": {
-        "description": "Update the specified API Token\n\nRequires at least the `Administrator` role on the organization",
-        "summary": "Update a specific API Token",
+        "description": "Update the details of the specified API Token.\n\nRequire the `Administrate` role at the global level or on the token's targeted teams.",
+        "summary": "Update the details of the specified API Token",
         "operationId": "ApiTokenUpdateOne",
         "requestBody": {
           "content": {
@@ -429,8 +429,8 @@
     },
     "/v2/api-tokens/{tokenId}/regenerate-token": {
       "post": {
-        "description": "Regenerate the specified API Token\n\nRequires at least the `Administrator` role on the organization",
-        "summary": "Regenerate a specific API Token",
+        "description": "Regenerate the specified API Token.\n\nRequire the `Administrate` role at the global level or on the token's targeted teams.",
+        "summary": "Regenerate the specified API Token",
         "operationId": "ApiTokenRegenerate",
         "parameters": [
           {
@@ -538,8 +538,8 @@
     },
     "/v2/info": {
       "get": {
-        "description": "Get the server information\n\nNo permission, no authentication needed.",
-        "summary": "Get server information",
+        "description": "Get the server information.\n\nNo permission, no authentication required.",
+        "summary": "Get the server information",
         "operationId": "InfoRead",
         "responses": {
           "200": {
@@ -652,8 +652,8 @@
     },
     "/v2/locations": {
       "get": {
-        "description": "List all the locations that can be seen by the API token",
-        "summary": "Retrieve the list of locations",
+        "description": "List all the locations that can be seen by the API token.\n\nRequire at least the `Read` role on any team.",
+        "summary": "List all the locations that can be seen by the API token",
         "operationId": "LocationReadAll",
         "parameters": [
           {
@@ -765,8 +765,8 @@
     },
     "/v2/packages": {
       "get": {
-        "description": "List all the packages that can be seen by the API token",
-        "summary": "Retrieve the list of packages",
+        "description": "List all the packages that can be seen by the API token.\n\nRequire at least the `Read` role on a team to see its packages; others are omitted.",
+        "summary": "List all the packages that can be seen by the API token",
         "operationId": "PackageReadAll",
         "responses": {
           "200": {
@@ -860,7 +860,7 @@
         ]
       },
       "post": {
-        "description": "Create a new package",
+        "description": "Create a new package.\n\nRequire the `Configure` role on the target team.\nRequire the Managed Package feature to be enabled on the organization when creating a managed package.",
         "summary": "Create a new package",
         "operationId": "PackageCreateOne",
         "requestBody": {
@@ -967,8 +967,8 @@
     },
     "/v2/packages/{packageId}": {
       "delete": {
-        "description": "Delete the specified package",
-        "summary": "Delete a specific package",
+        "description": "Delete the specified package.\n\nRequire the `Configure` role on the package's team.",
+        "summary": "Delete the specified package",
         "operationId": "PackageDeleteOne",
         "parameters": [
           {
@@ -1067,8 +1067,8 @@
         ]
       },
       "get": {
-        "description": "Get the details of a specified package",
-        "summary": "Get the details of a specific package",
+        "description": "Get the details of the specified package.\n\nRequire the `Read` role on the package's team.",
+        "summary": "Get the details of the specified package",
         "operationId": "PackageReadOne",
         "parameters": [
           {
@@ -1174,8 +1174,8 @@
         ]
       },
       "put": {
-        "description": "Update the specified package",
-        "summary": "Update a specific package",
+        "description": "Update the details of the specified package.\n\nRequire the `Configure` role on the package's team.",
+        "summary": "Update the details of the specified package",
         "operationId": "PackageUpdateOne",
         "requestBody": {
           "content": {
@@ -1293,8 +1293,8 @@
     },
     "/v2/runs": {
       "get": {
-        "description": "List all the Runs updated since the provided timestamp (default: 24h)\n\nRequires at least the `Read` role on the simulation's team.",
-        "summary": "Retrieve the list of Runs",
+        "description": "List all the Runs updated since the provided timestamp (default: 24h).\n\nRequire at least the `Read` role on the run's simulation's team; others are omitted.",
+        "summary": "List all the Runs updated since the provided timestamp (default: 24h)",
         "operationId": "RunReadAll",
         "parameters": [
           {
@@ -1400,8 +1400,8 @@
     },
     "/v2/runs/{runId}": {
       "get": {
-        "description": "Get details of a specified Run\n\nRequires at least the `Read` role on the run's team.",
-        "summary": "Get details of a Run",
+        "description": "Get the details of the specified Run.\n\nRequire the `Read` role on the run's simulation's team.",
+        "summary": "Get the details of the specified Run",
         "operationId": "RunReadOne",
         "parameters": [
           {
@@ -1507,8 +1507,8 @@
         ]
       },
       "put": {
-        "description": "Update the details of a specified Run.\n\nRequires at least the `Configure` role on the simulation's team.",
-        "summary": "Update a Run",
+        "description": "Update the details of the specified Run.\n\nRequire the `Administrate` role on the run's simulation's team.",
+        "summary": "Update the details of the specified Run",
         "operationId": "RunUpdateOne",
         "requestBody": {
           "content": {
@@ -1626,8 +1626,8 @@
     },
     "/v2/runs/{runId}/actions/stop": {
       "post": {
-        "description": "Stop the specified Run.",
-        "summary": "Stop a Run",
+        "description": "Stop the specified Run.\n\nRequire the `Start` role on the run's simulation's team.",
+        "summary": "Stop the specified Run",
         "operationId": "RunStopOne",
         "parameters": [
           {
@@ -1728,8 +1728,8 @@
     },
     "/v2/source-repositories": {
       "get": {
-        "description": "List all the Source Repositories",
-        "summary": "Retrieve the list of Source Repositories",
+        "description": "List all the Source Repositories that can be seen by the API token.\n\nRequire at least the `Read` role on a team to see its source repositories; others are omitted.",
+        "summary": "List all the Source Repositories that can be seen by the API token",
         "operationId": "SourceRepositoryReadAll",
         "responses": {
           "200": {
@@ -1823,7 +1823,7 @@
         ]
       },
       "post": {
-        "description": "Create a new Source Repository",
+        "description": "Create a new Source Repository.\n\nRequire the `Configure` role on the target team.",
         "summary": "Create a new Source Repository",
         "operationId": "SourceRepositoryCreateOne",
         "requestBody": {
@@ -1930,8 +1930,8 @@
     },
     "/v2/source-repositories/{sourceRepositoryId}": {
       "delete": {
-        "description": "Delete the specified Source Repository",
-        "summary": "Delete a specific Source Repository",
+        "description": "Delete the specified Source Repository.\n\nRequire the `Configure` role on the source repository's team.",
+        "summary": "Delete the specified Source Repository",
         "operationId": "SourceRepositoryDeleteOne",
         "parameters": [
           {
@@ -2030,8 +2030,8 @@
         ]
       },
       "get": {
-        "description": "Get details of a specified Source Repository",
-        "summary": "Get details of a Source Repository",
+        "description": "Get the details of the specified Source Repository.\n\nRequire the `Read` role on the source repository's team.",
+        "summary": "Get the details of the specified Source Repository",
         "operationId": "SourceRepositoryReadOne",
         "parameters": [
           {
@@ -2139,8 +2139,8 @@
     },
     "/v2/sso-groups": {
       "get": {
-        "description": "List all the SSO Groups",
-        "summary": "Retrieve the list of SSO groups",
+        "description": "List all the SSO Groups that can be seen by the API token.\n\nRequire the `Administrate` role at the global level or on a team to see its SSO groups; others are omitted.",
+        "summary": "List all the SSO Groups that can be seen by the API token",
         "operationId": "SsoGroupReadAll",
         "responses": {
           "200": {
@@ -2234,7 +2234,7 @@
         ]
       },
       "post": {
-        "description": "Create a new SSO group",
+        "description": "Create a new SSO group.\n\nRequire the `Administrate` role at the global level or on each target team.\nRequire the SSO Group Mapping feature to be enabled.",
         "summary": "Create a new SSO group",
         "operationId": "SsoGroupCreateOne",
         "requestBody": {
@@ -2341,8 +2341,8 @@
     },
     "/v2/sso-groups/{ssoGroupId}": {
       "delete": {
-        "description": "Delete the specified SSO group",
-        "summary": "Delete a specific SSO group",
+        "description": "Delete the specified SSO group.\n\nRequire the `Administrate` role at the global level or on the SSO group's targeted teams.",
+        "summary": "Delete the specified SSO group",
         "operationId": "SsoGroupDeleteOne",
         "parameters": [
           {
@@ -2441,8 +2441,8 @@
         ]
       },
       "get": {
-        "description": "Get the details of the specified SSO group",
-        "summary": "Get the details of a specific SSO group",
+        "description": "Get the details of the specified SSO group.\n\nRequire the `Administrate` role at the global level or on the SSO group's teams.",
+        "summary": "Get the details of the specified SSO group",
         "operationId": "SsoGroupReadOne",
         "parameters": [
           {
@@ -2548,8 +2548,8 @@
         ]
       },
       "put": {
-        "description": "Update the details of the specified SSO group",
-        "summary": "Update the details of a specific SSO group",
+        "description": "Update the details of the specified SSO group.\n\nRequire the `Administrate` role at the global level or on the SSO group's targeted teams.",
+        "summary": "Update the details of the specified SSO group",
         "operationId": "SsoGroupUpdateOne",
         "requestBody": {
           "content": {
@@ -2667,8 +2667,8 @@
     },
     "/v2/teams": {
       "get": {
-        "description": "Retrieve the list of all the teams that can be seen by the API token\n\nRequires at least the `Read` role on each team, otherwise they are omitted from the response",
-        "summary": "Retrieve the list of teams",
+        "description": "List all the teams that can be seen by the API token.\n\nRequire at least the `Read` role on a team to see it; others are omitted.",
+        "summary": "List all the teams that can be seen by the API token",
         "operationId": "TeamReadAll",
         "responses": {
           "200": {
@@ -2762,7 +2762,7 @@
         ]
       },
       "post": {
-        "description": "Create a new team",
+        "description": "Create a new team.\n\nRequire the `Administrate` role at the global level.",
         "summary": "Create a new team",
         "operationId": "TeamCreateOne",
         "requestBody": {
@@ -2869,8 +2869,8 @@
     },
     "/v2/teams/{teamId}": {
       "delete": {
-        "description": "Delete the specified team",
-        "summary": "Delete a specific team",
+        "description": "Delete the specified team.\n\nRequire the `Administrate` role at the global level or on the team.",
+        "summary": "Delete the specified team",
         "operationId": "TeamDeleteOne",
         "parameters": [
           {
@@ -2978,8 +2978,8 @@
         ]
       },
       "get": {
-        "description": "Get details of a specific team",
-        "summary": "Get the details of a specific team",
+        "description": "Get the details of the specified team.\n\nRequire the `Read` role on the team.",
+        "summary": "Get the details of the specified team",
         "operationId": "TeamReadOne",
         "parameters": [
           {
@@ -3087,8 +3087,8 @@
     },
     "/v2/teams/{teamId}/limits": {
       "get": {
-        "description": "Get the limits of a specific team",
-        "summary": "Get the limits of a specific team",
+        "description": "Get the limits of the specified team.\n\nRequire the `Administrate` role at the global level.",
+        "summary": "Get the limits of the specified team",
         "operationId": "TeamLimitReadOne",
         "parameters": [
           {
@@ -3194,8 +3194,8 @@
         ]
       },
       "put": {
-        "description": "Update the limits of a specific team",
-        "summary": "Update the limits of a specific team",
+        "description": "Update the limits of the specified team.\n\nRequire the `Administrate` role at the global level.",
+        "summary": "Update the limits of the specified team",
         "operationId": "TeamLimitUpdateOne",
         "requestBody": {
           "content": {
@@ -3313,8 +3313,8 @@
     },
     "/v2/tests": {
       "get": {
-        "description": "List all the tests that can be seen by the API token",
-        "summary": "Retrieve the list of tests",
+        "description": "List all the tests that can be seen by the API token.\n\nRequire at least the `Read` role on the team of the test's package or source repository; others are omitted.",
+        "summary": "List all the tests that can be seen by the API token",
         "operationId": "TestReadAll",
         "parameters": [
           {
@@ -3431,7 +3431,7 @@
         ]
       },
       "post": {
-        "description": "Create a new test",
+        "description": "Create a new test.\n\nRequire the `Configure` role on the team of the referenced package or source repository.",
         "summary": "Create a new test",
         "operationId": "TestCreateOne",
         "requestBody": {
@@ -3538,8 +3538,8 @@
     },
     "/v2/tests/{testId}": {
       "delete": {
-        "description": "Delete the specified test",
-        "summary": "Delete a specific test",
+        "description": "Delete the specified test.\n\nRequire the `Configure` role on the team of the test's package or source repository.",
+        "summary": "Delete the specified test",
         "operationId": "TestDeleteOne",
         "parameters": [
           {
@@ -3638,8 +3638,8 @@
         ]
       },
       "get": {
-        "description": "Get the details of a specified test",
-        "summary": "Get the details of a specific test",
+        "description": "Get the details of the specified test.\n\nRequire the `Read` role on the team of the test's package or source repository.",
+        "summary": "Get the details of the specified test",
         "operationId": "TestReadOne",
         "parameters": [
           {
@@ -3745,8 +3745,8 @@
         ]
       },
       "put": {
-        "description": "Update the specified test",
-        "summary": "Update a specific test",
+        "description": "Update the details of the specified test.\n\nRequire the `Configure` role on the team of the test's package or source repository.",
+        "summary": "Update the details of the specified test",
         "operationId": "TestUpdateOne",
         "requestBody": {
           "content": {
@@ -3864,8 +3864,8 @@
     },
     "/v2/tests/{testId}/runs": {
       "post": {
-        "description": "Star a run for the specified test",
-        "summary": "Start a run for a specific test",
+        "description": "Start a run for the specified test.\n\nRequire the `Start` role on the team of the test's package or source repository.",
+        "summary": "Start a run for the specified test",
         "operationId": "TestStartOne",
         "requestBody": {
           "content": {
@@ -3982,8 +3982,8 @@
     },
     "/v2/users": {
       "get": {
-        "description": "List all the Users that the API Token can see\n\nRequires that your organization has SSO without SSO Mapping",
-        "summary": "Retrieve the list of users",
+        "description": "List all the users that can be seen by the API token.\n\nRequire the `Read` role at the global level or on any team.\nRequire the SSO Group Mapping feature to be disabled.",
+        "summary": "List all the users that can be seen by the API token",
         "operationId": "UserReadAll",
         "parameters": [
           {
@@ -4099,7 +4099,7 @@
         ]
       },
       "post": {
-        "description": "Create a new user\n\nRequires that your organization has SSO without SSO Mapping",
+        "description": "Create a new user.\n\nRequire the `Administrate` role at the global level or on each target team.\nRequire the organization to have Custom SSO configured.\nRequire the SSO Group Mapping feature to be disabled.",
         "summary": "Create a new user",
         "operationId": "UserCreateOne",
         "requestBody": {
@@ -4206,8 +4206,8 @@
     },
     "/v2/users/{userId}": {
       "delete": {
-        "description": "Delete the specified user\n\nRequires that your organization has SSO without SSO Mapping",
-        "summary": "Delete the specific user",
+        "description": "Delete the specified user.\n\nRequire the `Administrate` role at the global level.",
+        "summary": "Delete the specified user",
         "operationId": "UserDeleteOne",
         "parameters": [
           {
@@ -4296,9 +4296,6 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ],
         "security": [
           {
             "ApiKeyAuth": []
@@ -4306,8 +4303,8 @@
         ]
       },
       "get": {
-        "description": "Get the details of the specified user\n\nRequires that your organization has SSO without SSO Mapping",
-        "summary": "Get the details of a specific user",
+        "description": "Get the details of the specified user.\n\nRequire the `Read` role at the global level or on any team.\nRequire the SSO Group Mapping feature to be disabled.",
+        "summary": "Get the details of the specified user",
         "operationId": "UserReadOne",
         "parameters": [
           {
@@ -4413,8 +4410,8 @@
         ]
       },
       "put": {
-        "description": "Update the details of the specified user\n\nRequires that your organization has SSO without SSO Mapping",
-        "summary": "Update the details of a specific user",
+        "description": "Update the details of the specified user.\n\nRequire the `Administrate` role at the global level or on any team.\nRequire the organization to have Custom SSO configured.\nRequire the SSO Group Mapping feature to be disabled.",
+        "summary": "Update the details of the specified user",
         "operationId": "UserUpdateOne",
         "requestBody": {
           "content": {
@@ -4520,9 +4517,6 @@
             }
           }
         },
-        "tags": [
-          "Users"
-        ],
         "security": [
           {
             "ApiKeyAuth": []
@@ -4534,7 +4528,7 @@
       "post": {
         "operationId": "uploadPackageContent",
         "summary": "Upload package content",
-        "description": "Upload the binary content of a package (simulation JAR or bundle).",
+        "description": "Upload the binary content of the specified package (simulation JAR or bundle).\n\nRequires the `Configure` role on the package's team.\nRequires the Managed Package feature to be enabled on the organization.",
         "tags": [
           "Packages"
         ],
