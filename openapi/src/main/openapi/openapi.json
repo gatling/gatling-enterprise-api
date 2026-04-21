@@ -1507,7 +1507,7 @@
         ]
       },
       "put": {
-        "description": "Update the details of the specified Run.\n\nRequire the `Administrate` role on the run's simulation's team.",
+        "description": "Update the details of the specified Run.\n\nRequire the `Start` role on the run's simulation's team.",
         "summary": "Update the details of the specified Run",
         "operationId": "RunUpdateOne",
         "requestBody": {
