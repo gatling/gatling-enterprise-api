@@ -7826,10 +7826,14 @@
             "$ref": "#/components/schemas/UserRolesDto"
           },
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^<>&\"\\v$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]+$",
+            "description": "PersonName"
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^<>&\"\\v$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]+$",
+            "description": "PersonName"
           },
           "_type": {
             "allOf": [
@@ -7866,10 +7870,14 @@
             "$ref": "#/components/schemas/UserRolesDto"
           },
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^<>&\"\\v$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]+$",
+            "description": "PersonName"
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^<>&\"\\v$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]+$",
+            "description": "PersonName"
           },
           "_type": {
             "allOf": [
@@ -7939,10 +7947,14 @@
             "$ref": "#/components/schemas/UserRolesDto"
           },
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^<>&\"\\v$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]+$",
+            "description": "PersonName"
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[^<>&\"\\v$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]+$",
+            "description": "PersonName"
           }
         },
         "required": [
