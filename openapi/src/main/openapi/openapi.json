@@ -6310,6 +6310,9 @@
           "_outcome": {
             "$ref": "#/components/schemas/RunOutcomeResponse"
           },
+          "_runtime": {
+            "$ref": "#/components/schemas/RuntimeDto"
+          },
           "_configuration": {
             "$ref": "#/components/schemas/RunConfigurationDetails"
           }
@@ -6319,6 +6322,7 @@
           "_creditsUsed",
           "_id",
           "_result",
+          "_runtime",
           "_status",
           "_type",
           "_updatedAt"
@@ -6439,6 +6443,21 @@
         "required": [
           "data",
           "relatedResources"
+        ]
+      },
+      "RuntimeDto": {
+        "type": "object",
+        "properties": {
+          "gatlingVersion": {
+            "type": "string",
+            "description": "Package gatling version"
+          },
+          "timeline": {
+            "$ref": "#/components/schemas/TimelineDto"
+          }
+        },
+        "required": [
+          "timeline"
         ]
       },
       "SourceItem": {
@@ -6584,6 +6603,38 @@
         },
         "required": [
           "type"
+        ]
+      },
+      "TimelineDto": {
+        "type": "object",
+        "properties": {
+          "build": {
+            "$ref": "#/components/schemas/TimelineStepDto"
+          },
+          "deploy": {
+            "$ref": "#/components/schemas/TimelineStepDto"
+          },
+          "inject": {
+            "$ref": "#/components/schemas/TimelineStepDto"
+          }
+        }
+      },
+      "TimelineStepDto": {
+        "type": "object",
+        "properties": {
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "endedAt",
+          "startedAt"
         ]
       },
       "_RunType": {
