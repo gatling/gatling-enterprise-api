@@ -1304,6 +1304,28 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "format": "int32"
+            }
+          },
+          {
+            "name": "test-id",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Test ID"
+              }
+            },
+            "explode": true
           }
         ],
         "responses": {
@@ -1644,6 +1666,115 @@
         "responses": {
           "202": {
             "description": "RunStopOne 202 response"
+          },
+          "400": {
+            "description": "BadRequestError 400 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ForbiddenError 403 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponseContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ConflictError 409 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictErrorResponseContent"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "GoneError 410 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoneErrorResponseContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "UnprocessableContentError 422 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Runs"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/v2/runs/{runId}/logs": {
+      "get": {
+        "description": "Get the logs of the specified Run.\n\nRequire the `Read` role on the run's simulation's team.",
+        "summary": "Get the logs of the specified Run",
+        "operationId": "RunReadLogs",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run ID",
+            "schema": {
+              "type": "string",
+              "description": "Run ID"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "RunReadLogs 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunReadLogsResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "BadRequestError 400 response",
@@ -6369,6 +6500,22 @@
           "_updatedAt"
         ]
       },
+      "RunLogResponse": {
+        "type": "object",
+        "properties": {
+          "emittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "emittedAt",
+          "message"
+        ]
+      },
       "RunOutcomeResponse": {
         "type": "object",
         "properties": {
@@ -6400,6 +6547,20 @@
           "data",
           "metadata",
           "relatedResources"
+        ]
+      },
+      "RunReadLogsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunLogResponse"
+            }
+          }
+        },
+        "required": [
+          "data"
         ]
       },
       "RunReadOneResponse": {
