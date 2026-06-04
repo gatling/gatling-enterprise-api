@@ -1646,6 +1646,125 @@
         ]
       }
     },
+    "/v2/runs/{runId}/actions/create-public-link": {
+      "post": {
+        "description": "Create a public link for the specified Run.\n\nThe link allows unauthenticated access to the run's dashboard until it expires.\nRequire the `Start` role on the run's simulation's team.",
+        "summary": "Create a public link for the specified Run",
+        "operationId": "RunPublicLinkCreateOne",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunPublicLinkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run ID",
+            "schema": {
+              "type": "string",
+              "description": "Run ID"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "RunPublicLinkCreateOne 201 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunPublicLinkCreateOneResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequestError 400 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ForbiddenError 403 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponseContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ConflictError 409 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictErrorResponseContent"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "GoneError 410 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoneErrorResponseContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "UnprocessableContentError 422 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Runs"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/v2/runs/{runId}/actions/stop": {
       "post": {
         "description": "Stop the specified Run.\n\nRequire the `Start` role on the run's simulation's team.",
@@ -4427,6 +4546,9 @@
             }
           }
         },
+        "tags": [
+          "Users"
+        ],
         "security": [
           {
             "ApiKeyAuth": []
@@ -4648,6 +4770,9 @@
             }
           }
         },
+        "tags": [
+          "Users"
+        ],
         "security": [
           {
             "ApiKeyAuth": []
@@ -5272,7 +5397,9 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Non-empty trimmed string"
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^\\S(.*\\S)?$"
           },
           "_type": {
             "allOf": [
@@ -6527,6 +6654,34 @@
           "successful"
         ]
       },
+      "RunPublicLinkCreateOneResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "expiresAt",
+          "url"
+        ]
+      },
+      "RunPublicLinkRequest": {
+        "type": "object",
+        "properties": {
+          "durationInDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "durationInDays"
+        ]
+      },
       "RunReadAllResponse": {
         "type": "object",
         "properties": {
@@ -7279,7 +7434,9 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Non-empty trimmed string"
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^\\S(.*\\S)?$"
           },
           "_type": {
             "allOf": [
@@ -7324,7 +7481,9 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Non-empty trimmed string"
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^\\S(.*\\S)?$"
           },
           "_type": {
             "allOf": [
@@ -7440,7 +7599,9 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Non-empty trimmed string"
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^\\S(.*\\S)?$"
           }
         },
         "required": [
