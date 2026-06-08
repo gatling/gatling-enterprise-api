@@ -1976,6 +1976,266 @@
         ]
       }
     },
+    "/v2/runs/{runId}/views/report/groups": {
+      "get": {
+        "description": "Get per-group performance statistics for the specified Run.\n\nReturns the run's top-level groups; each group nests its sub-groups in\n`children`. Stats cover the full run unless `from` and `to` are specified as\noffsets in seconds from the run start.\n\nRequire the `Read` role on the run's simulation's team.",
+        "summary": "Get per-group performance statistics for the specified Run",
+        "operationId": "RunViewReadReportGroups",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run ID",
+            "schema": {
+              "type": "string",
+              "description": "Run ID"
+            },
+            "required": true
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Start of the time window, in seconds from run start. Defaults to 0.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Start of the time window, in seconds from run start. Defaults to 0.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the time window, in seconds from run start. Defaults to run duration.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "End of the time window, in seconds from run start. Defaults to run duration.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scenario",
+            "in": "query",
+            "description": "Filter to a specific scenario. Omit to combine all scenarios.",
+            "schema": {
+              "type": "string",
+              "description": "Filter to a specific scenario. Omit to combine all scenarios."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "RunViewReadReportGroups 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunViewReadReportGroupsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequestError 400 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ForbiddenError 403 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponseContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "GoneError 410 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoneErrorResponseContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "UnprocessableContentError 422 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Runs"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/v2/runs/{runId}/views/report/requests": {
+      "get": {
+        "description": "Get per-request performance statistics for the specified Run.\n\nReturns a tree: the root aggregates all requests, intermediate nodes are groups,\nand leaf nodes are individual requests. Stats cover the full run unless `from`\nand `to` are specified as offsets in seconds from the run start.\n\nRequire the `Read` role on the run's simulation's team.",
+        "summary": "Get per-request performance statistics for the specified Run",
+        "operationId": "RunViewReadReportRequests",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run ID",
+            "schema": {
+              "type": "string",
+              "description": "Run ID"
+            },
+            "required": true
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Start of the time window, in seconds from run start. Defaults to 0.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Start of the time window, in seconds from run start. Defaults to 0.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the time window, in seconds from run start. Defaults to run duration.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "End of the time window, in seconds from run start. Defaults to run duration.",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scenario",
+            "in": "query",
+            "description": "Filter to a specific scenario. Omit to combine all scenarios.",
+            "schema": {
+              "type": "string",
+              "description": "Filter to a specific scenario. Omit to combine all scenarios."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "RunViewReadReportRequests 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunViewReadReportRequestsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequestError 400 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ForbiddenError 403 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponseContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "GoneError 410 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoneErrorResponseContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "UnprocessableContentError 422 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Runs"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/v2/source-repositories": {
       "get": {
         "description": "List all the Source Repositories that can be seen by the API token.\n\nRequire at least the `Read` role on a team to see its source repositories; others are omitted.",
@@ -6957,6 +7217,398 @@
         "type": "string",
         "enum": [
           "run"
+        ]
+      },
+      "RunViewCountDto": {
+        "type": "object",
+        "properties": {
+          "sent": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "result": {
+            "$ref": "#/components/schemas/RunViewResultDto"
+          }
+        },
+        "required": [
+          "result",
+          "sent"
+        ]
+      },
+      "RunViewGroupCountDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/RunViewResultDto"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "RunViewGroupNodeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "$ref": "#/components/schemas/RunViewCountDto"
+          },
+          "responseTimeInMs": {
+            "$ref": "#/components/schemas/RunViewResponseTimeInMsDto"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunViewNodeDto"
+            }
+          }
+        },
+        "required": [
+          "children",
+          "count",
+          "name"
+        ]
+      },
+      "RunViewGroupNodeType": {
+        "type": "string",
+        "enum": [
+          "group"
+        ]
+      },
+      "RunViewGroupReportNodeDto": {
+        "type": "object",
+        "description": "A group of the run. The tree is homogeneous: every node is a group, and its\n`children` are its sub-groups.",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/RunViewGroupNodeType"
+          },
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "$ref": "#/components/schemas/RunViewGroupCountDto"
+          },
+          "cumulatedResponseTimeInMs": {
+            "$ref": "#/components/schemas/RunViewResponseTimeInMsDto"
+          },
+          "executionTimeInMs": {
+            "$ref": "#/components/schemas/RunViewResponseTimeInMsDto"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunViewGroupReportNodeDto"
+            }
+          }
+        },
+        "required": [
+          "children",
+          "count",
+          "name",
+          "type"
+        ]
+      },
+      "RunViewNodeDto": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/RunViewNodeDtoRequest_group"
+          },
+          {
+            "$ref": "#/components/schemas/RunViewNodeDtoRequest"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "request_group": "#/components/schemas/RunViewNodeDtoRequest_group",
+            "request": "#/components/schemas/RunViewNodeDtoRequest"
+          }
+        }
+      },
+      "RunViewNodeDtoMixin": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "RunViewNodeDtoRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RunViewRequestLeafDto"
+          },
+          {
+            "$ref": "#/components/schemas/RunViewNodeDtoMixin"
+          }
+        ]
+      },
+      "RunViewNodeDtoRequest_group": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RunViewGroupNodeDto"
+          },
+          {
+            "$ref": "#/components/schemas/RunViewNodeDtoMixin"
+          }
+        ]
+      },
+      "RunViewReadReportGroupsMetadataDto": {
+        "type": "object",
+        "properties": {
+          "requestTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "query": {
+            "$ref": "#/components/schemas/RunViewReadReportGroupsQueryDto"
+          }
+        },
+        "required": [
+          "query",
+          "requestTime"
+        ]
+      },
+      "RunViewReadReportGroupsQueryDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "to": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scenario": {
+            "type": "string",
+            "description": "Name of the scenario"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ]
+      },
+      "RunViewReadReportGroupsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunViewGroupReportNodeDto"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/RunViewReadReportGroupsMetadataDto"
+          }
+        },
+        "required": [
+          "data",
+          "metadata"
+        ]
+      },
+      "RunViewReadReportRequestsMetadataDto": {
+        "type": "object",
+        "properties": {
+          "requestTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "query": {
+            "$ref": "#/components/schemas/RunViewReadReportRequestsQueryDto"
+          }
+        },
+        "required": [
+          "query",
+          "requestTime"
+        ]
+      },
+      "RunViewReadReportRequestsQueryDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "to": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scenario": {
+            "type": "string",
+            "description": "Name of the scenario"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ]
+      },
+      "RunViewReadReportRequestsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RunViewReportDataDto"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/RunViewReadReportRequestsMetadataDto"
+          }
+        },
+        "required": [
+          "data",
+          "metadata"
+        ]
+      },
+      "RunViewReportDataDto": {
+        "type": "object",
+        "description": "The report root aggregates every request in the run, or only those of the\n`scenario` query parameter when it is set. Its children are the run's\ntop-level groups and ungrouped requests.",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/RunViewReportType"
+          },
+          "count": {
+            "$ref": "#/components/schemas/RunViewCountDto"
+          },
+          "responseTimeInMs": {
+            "$ref": "#/components/schemas/RunViewResponseTimeInMsDto"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RunViewNodeDto"
+            }
+          }
+        },
+        "required": [
+          "children",
+          "count",
+          "type"
+        ]
+      },
+      "RunViewReportType": {
+        "type": "string",
+        "enum": [
+          "report"
+        ]
+      },
+      "RunViewRequestLeafDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "$ref": "#/components/schemas/RunViewCountDto"
+          },
+          "responseTimeInMs": {
+            "$ref": "#/components/schemas/RunViewResponseTimeInMsDto"
+          }
+        },
+        "required": [
+          "count",
+          "name"
+        ]
+      },
+      "RunViewResponseTimeInMsDto": {
+        "type": "object",
+        "properties": {
+          "mean": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "standardDeviation": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "min": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p25": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p50": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p75": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p80": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p85": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p90": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p95": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p99": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "p999": {
+            "type": "integer",
+            "description": "99.9th percentile",
+            "format": "int64"
+          },
+          "p9999": {
+            "type": "integer",
+            "description": "99.99th percentile",
+            "format": "int64"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "max",
+          "mean",
+          "min",
+          "p25",
+          "p50",
+          "p75",
+          "p80",
+          "p85",
+          "p90",
+          "p95",
+          "p99",
+          "p999",
+          "p9999",
+          "standardDeviation"
+        ]
+      },
+      "RunViewResultDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ko": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "ko",
+          "ok"
         ]
       },
       "Remote": {
