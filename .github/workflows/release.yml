@@ -49,24 +49,21 @@ jobs:
 
       - name: Release
         id: release
-        run: |
-          sbt "release with-defaults"
-          export VERSION="$(cat target/release-info)"
-          echo "version=$VERSION" # DO NOT REMOVE, because of bad parsing for outputs
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          if [[ "$VERSION" =~ .*-M[0-9]+ ]]; then
-            echo "repository=milestones" >> $GITHUB_OUTPUT
-          else
-            echo "repository=releases" >> $GITHUB_OUTPUT
-          fi
+        run: sbt "release with-defaults"
 
       - name: Publish on CodeArtifact (prod/us-east-1)
         env:
           DOMAIN: ${{ secrets.AWS_CODEARTIFACT_DOMAIN }}
           DOMAIN_OWNER: ${{ secrets.AWS_CODEARTIFACT_OWNER }}
-          REPOSITORY: ${{ steps.release.outputs.repository }}
-          VERSION: ${{ steps.release.outputs.version }}
+          TAG: ${{ github.ref_name }}
         run: |
+          VERSION="${TAG#v}"
+          if [[ "$VERSION" =~ .*-M[0-9]+ ]]; then
+            REPOSITORY="milestones"
+          else
+            REPOSITORY="releases"
+          fi
+          
           aws \
             --region us-east-1 \
             codeartifact update-package-versions-status \
