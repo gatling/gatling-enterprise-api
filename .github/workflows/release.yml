@@ -36,13 +36,13 @@ jobs:
       - name: Configure AWS Credentials (prod)
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Prepare environment
         env:
-          PRIVATE_REPOSITORY_SBT: ${{ secrets.PRIVATE_REPOSITORY_SBT }}
+          PRIVATE_REPOSITORY_SBT: ${{ vars.PRIVATE_REPOSITORY_SBT_2 }}
         run: |
           mkdir --parents ~/.sbt/1.0 || true
           echo "$PRIVATE_REPOSITORY_SBT" > ~/.sbt/1.0/privateRepository.sbt
@@ -53,8 +53,8 @@ jobs:
 
       - name: Publish on CodeArtifact (prod/us-east-1)
         env:
-          DOMAIN: ${{ secrets.AWS_CODEARTIFACT_DOMAIN }}
-          DOMAIN_OWNER: ${{ secrets.AWS_CODEARTIFACT_OWNER }}
+          DOMAIN: ${{ vars.AWS_CODEARTIFACT_DOMAIN }}
+          DOMAIN_OWNER: ${{ vars.AWS_CODEARTIFACT_OWNER }}
           TAG: ${{ github.ref_name }}
         run: |
           VERSION="${TAG#v}"
