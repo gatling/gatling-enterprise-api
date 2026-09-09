@@ -8500,6 +8500,14 @@
           "simulation"
         ]
       },
+      "PostExecutionDto": {
+        "type": "object",
+        "properties": {
+          "notification": {
+            "$ref": "#/components/schemas/TestNotificationDto"
+          }
+        }
+      },
       "SourceDetails": {
         "oneOf": [
           {
@@ -8593,6 +8601,9 @@
           "source": {
             "$ref": "#/components/schemas/SourceDetails"
           },
+          "postExecution": {
+            "$ref": "#/components/schemas/PostExecutionDto"
+          },
           "_type": {
             "allOf": [
               {
@@ -8669,6 +8680,29 @@
           "source"
         ]
       },
+      "TestJiraIntegrationDto": {
+        "type": "object",
+        "properties": {
+          "projectKey": {
+            "type": "string"
+          },
+          "workTypeId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectKey",
+          "workTypeId"
+        ]
+      },
+      "TestNotificationDto": {
+        "type": "object",
+        "properties": {
+          "jira": {
+            "$ref": "#/components/schemas/TestJiraIntegrationDto"
+          }
+        }
+      },
       "TestReadAllResponse": {
         "type": "object",
         "properties": {
@@ -8733,6 +8767,9 @@
           },
           "source": {
             "$ref": "#/components/schemas/SourceDetails"
+          },
+          "postExecution": {
+            "$ref": "#/components/schemas/PostExecutionDto"
           }
         },
         "required": [
