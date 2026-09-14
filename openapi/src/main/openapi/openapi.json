@@ -6808,8 +6808,7 @@
             "description": "Run ID"
           },
           "_status": {
-            "type": "string",
-            "description": "Run status"
+            "$ref": "#/components/schemas/RunStatusV2Enum"
           },
           "_updatedAt": {
             "type": "string",
@@ -6868,8 +6867,7 @@
             "description": "Run ID"
           },
           "_status": {
-            "type": "string",
-            "description": "Run status"
+            "$ref": "#/components/schemas/RunStatusV2Enum"
           },
           "_updatedAt": {
             "type": "string",
@@ -7005,6 +7003,28 @@
             "description": "Non-empty trimmed string"
           }
         }
+      },
+      "RunStatusV2Enum": {
+        "type": "string",
+        "description": "Run status",
+        "enum": [
+          "building",
+          "deploying",
+          "deployed",
+          "injecting",
+          "successful",
+          "assertions_successful",
+          "automatically_stopped",
+          "stopped",
+          "assertions_failed",
+          "timeout",
+          "build_failed",
+          "broken",
+          "deployment_failed",
+          "insufficient_credit",
+          "stop_requested",
+          "stop_criteria_triggered"
+        ]
       },
       "RunUpdateOneResponse": {
         "type": "object",
