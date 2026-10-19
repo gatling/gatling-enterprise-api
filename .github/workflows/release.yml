@@ -47,30 +47,4 @@ jobs:
           echo "$PRIVATE_REPOSITORY_SBT" > ~/.sbt/1.0/privateRepository.sbt
 
       - name: Release
-        id: release
-        run: sbt "release with-defaults"
-
-      - name: Publish on CodeArtifact (prod/us-east-1)
-        env:
-          DOMAIN: ${{ vars.AWS_CODEARTIFACT_DOMAIN }}
-          DOMAIN_OWNER: ${{ vars.AWS_CODEARTIFACT_OWNER }}
-          TAG: ${{ github.ref_name }}
-        run: |
-          VERSION="${TAG#v}"
-          if [[ "$VERSION" =~ .*-M[0-9]+ ]]; then
-            REPOSITORY="milestones"
-          else
-            REPOSITORY="releases"
-          fi
-          
-          aws \
-            --region us-east-1 \
-            codeartifact update-package-versions-status \
-            --domain "$DOMAIN" \
-            --domain-owner "$DOMAIN_OWNER" \
-            --repository "$REPOSITORY" \
-            --format maven \
-            --namespace io.gatling.enterprise \
-            --package gatling-enterprise-api \
-            --versions "$VERSION" \
-            --target-status Published
+        run: sbt "test; gatlingPublish"
