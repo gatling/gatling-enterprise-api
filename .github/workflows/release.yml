@@ -36,8 +36,7 @@ jobs:
       - name: Configure AWS Credentials (prod)
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
-          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_PROD_ENTERPRISE_API }}
           aws-region: us-east-1
 
       - name: Prepare environment
