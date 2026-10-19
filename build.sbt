@@ -7,7 +7,10 @@ crossPaths := false
 
 enablePlugins(GatlingVersioningPlugin)
 enablePlugins(GatlingBasicInfoPlugin)
-enablePlugins(GatlingReleasePlugin)
+enablePlugins(GatlingPublishPlugin)
+// Exception: neither GatlingCorpPlugin nor GatlingOssPlugin, so artifacts must not be signed as no GPG key is available.
+// Switch to GatlingCorpPlugin if this artifact is private, or to GatlingOssPlugin (with GPG keys in CI) if it is public.
+GatlingPublishPlugin.unsignedAetherArtifact
 enablePlugins(SmithyBuildPlugin)
 
 libraryDependencies ++= Seq(
