@@ -5343,6 +5343,9 @@
             "$ref": "#/components/schemas/ApiTokenBriefResponse"
           },
           {
+            "$ref": "#/components/schemas/CampaignBriefResponse"
+          },
+          {
             "$ref": "#/components/schemas/ManagedLocationBriefResponse"
           },
           {
@@ -5373,6 +5376,35 @@
         "additionalProperties": {
           "$ref": "#/components/schemas/BriefResponse"
         }
+      },
+      "CampaignBriefResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "_id": {
+            "type": "string",
+            "description": "Campaign ID"
+          },
+          "_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_CampaignType"
+              },
+              {
+                "default": "campaign"
+              }
+            ]
+          }
+        },
+        "required": [
+          "_id",
+          "_type",
+          "title"
+        ]
       },
       "ConflictErrorResponseContent": {
         "type": "object",
@@ -5802,6 +5834,12 @@
         "type": "string",
         "enum": [
           "api_token"
+        ]
+      },
+      "_CampaignType": {
+        "type": "string",
+        "enum": [
+          "campaign"
         ]
       },
       "_ManagedLocationType": {
@@ -8058,6 +8096,13 @@
       "TeamAssets": {
         "type": "object",
         "properties": {
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Campaign ID"
+            }
+          },
           "tests": {
             "type": "array",
             "items": {
@@ -8081,6 +8126,7 @@
           }
         },
         "required": [
+          "campaigns",
           "packages",
           "sourceRepositories",
           "tests"
