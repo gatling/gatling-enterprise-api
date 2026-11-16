@@ -14,7 +14,7 @@ GatlingPublishPlugin.unsignedAetherArtifact
 enablePlugins(SmithyBuildPlugin)
 
 libraryDependencies ++= Seq(
-  "com.disneystreaming.alloy" % "alloy-core" % "0.3.40"
+  "com.disneystreaming.alloy" % "alloy-core" % "0.3.41"
 )
 
 Compile / compile := ((Compile / compile) dependsOn (Compile / smithyBuild)).value
