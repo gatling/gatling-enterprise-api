@@ -1421,6 +1421,106 @@
       }
     },
     "/v2/runs/{runId}": {
+      "delete": {
+        "description": "Delete the specified Run.\n\nRequire the `Configure` role on the run's simulation's team.",
+        "summary": "Delete the specified Run",
+        "operationId": "RunDeleteOne",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run ID",
+            "schema": {
+              "type": "string",
+              "description": "Run ID"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "RunDeleteOne 204 response"
+          },
+          "400": {
+            "description": "BadRequestError 400 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestErrorResponseContent"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "UnauthorizedError 401 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedErrorResponseContent"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "ForbiddenError 403 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorResponseContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFoundError 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorResponseContent"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "ConflictError 409 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictErrorResponseContent"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "GoneError 410 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoneErrorResponseContent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "UnprocessableContentError 422 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContentErrorResponseContent"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Runs"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
       "get": {
         "description": "Get the details of the specified Run.\n\nRequire the `Read` role on the run's simulation's team.",
         "summary": "Get the details of the specified Run",
